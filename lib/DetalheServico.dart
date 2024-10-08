@@ -1,23 +1,6 @@
 import 'package:flutter/material.dart';
-
-// void main() {
-//   runApp(const MyApp());
-// }
-
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Flutter Demo',
-//       theme: ThemeData(
-//         primarySwatch: Colors.blue,
-//       ),
-//       home: const DetalheServivo(),
-//     );
-//   }
-// }
+import 'dart:convert';
+import 'package:flutter/services.dart' show rootBundle;
 
 class DetalheServivo extends StatefulWidget {
   const DetalheServivo({super.key});
@@ -28,13 +11,46 @@ class DetalheServivo extends StatefulWidget {
 
 class _DetalheServivoState extends State<DetalheServivo> {
   int currentPageIndex = 0;
+  List<dynamic> jobs = [];
+  Map<String, dynamic>? job; // Modificado para um Map para trabalhar com chaves como 'titulo'
+  
+  @override
+  void initState() {
+    super.initState();
+    _loadJobs().then((data) {
+      setState(() {
+        jobs = data;
+      });
+    });
+  }
+
+  Future<List<dynamic>> _loadJobs() async {
+    String jsonString = await rootBundle.loadString('assets/json/jobs.json');
+    List<dynamic> jobs = json.decode(jsonString);
+    return jobs;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
     final int trabalhoId = ModalRoute.of(context)!.settings.arguments as int;
 
-    //print(trabalhoId);
+    // Verifica se os trabalhos já foram carregados e busca o trabalho correto
+    if (jobs.isNotEmpty) {
+      for (int i = 0; i < jobs.length; i++) {
+        if (jobs[i]['id'] == trabalhoId) {
+          job = jobs[i];
+          break;
+        }
+      }
+    }
+
+    // Retorna um layout de carregamento se o job não for encontrado ainda
+    if (job == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text("Carregando...")),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(),
@@ -65,23 +81,10 @@ class _DetalheServivoState extends State<DetalheServivo> {
                         ),
                         Container(
                           margin: const EdgeInsets.only(bottom: 32, left: 54),
-                          child: const Text(
-                            "Titúlo do trabalho",
-                            style: TextStyle(
+                          child: Text(
+                            job!['titulo'], // Exibe o título do trabalho
+                            style: const TextStyle(
                               color: Color(0xFF4F4F4F),
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(
-                              bottom: 57, left: 54, right: 54),
-                          width: double.infinity,
-                          child: const Text(
-                            "Encanador URGENTE para consertar meu cano",
-                            style: TextStyle(
-                              color: Color(0xFF000000),
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
@@ -99,12 +102,11 @@ class _DetalheServivoState extends State<DetalheServivo> {
                           ),
                         ),
                         Container(
-                          margin: const EdgeInsets.only(
-                              bottom: 26, left: 54, right: 54),
+                          margin: const EdgeInsets.only(bottom: 26, left: 54, right: 54),
                           width: double.infinity,
-                          child: const Text(
-                            "Estamos à procura de um encanador experiente para realizar reparos e manutenção em nosso sistema hidráulico.",
-                            style: TextStyle(
+                          child: Text(
+                            job!['descricao'], // Exibe a descrição do trabalho
+                            style: const TextStyle(
                               color: Color(0xFF000000),
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -124,9 +126,9 @@ class _DetalheServivoState extends State<DetalheServivo> {
                         ),
                         Container(
                           margin: const EdgeInsets.only(bottom: 68, left: 53),
-                          child: const Text(
-                            "R\$ 200.00",
-                            style: TextStyle(
+                          child: Text(
+                            "R\$ ${job!['preco']}", // Exibe o preço do trabalho
+                            style: const TextStyle(
                               color: Color(0xFF27AE60),
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
