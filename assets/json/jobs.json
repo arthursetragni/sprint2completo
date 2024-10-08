@@ -1,0 +1,24 @@
+[
+    {
+      "id": 1,
+      "titulo": "Encanador URGENTE para consertar meu bueiro",
+      "descricao": "Estamos à procura de um encanador experiente para realizar reparos e manutenção em nosso sistema hidráulico.",
+      "preco": 200.00,
+      "imagem": "assets/home/encanador.png"
+    },
+    {
+      "id": 2,
+      "titulo": "Empregada Doméstica para limpeza geral",
+      "descricao": "Precisa-se de uma empregada doméstica para serviços de limpeza geral, organização e manutenção da casa.",
+      "preco": 150.00,
+      "imagem": "assets/home/empregada.jpg"
+    },
+    {
+      "id": 3,
+      "titulo": "Eletricista para instalação elétrica residencial",
+      "descricao": "Serviço de eletricista para realizar instalação elétrica, resolver problemas de fiação e garantir a segurança elétrica da casa.",
+      "preco": 300.00,
+      "imagem": "assets/home/eletricista.png"
+    }
+  ]
+  

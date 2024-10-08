@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart' show rootBundle;
+
+
+
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -115,27 +120,24 @@ class _HomeState extends State<Home> {
                         ),
                         // Cards em linha para "Top da semana"
                         SizedBox(
-                          height: 250, // Aumentar a altura do carrossel
+                          height: 250,
                           child: PageView(
                             controller: PageController(viewportFraction: 0.5),
-                            children: [
-                              // Card 1
-                              _buildCard("Empregada do...", "R\$ 100,00",
-                                  'assets/home/empregada.jpg'),
-                              // Card 2
-                              GestureDetector(
+                            children: jobs.map((job) {
+                              return GestureDetector(
                                 onTap: () {
-                                  Navigator.pushNamed(context, "/Detalhe");
+                                  Navigator.pushNamed(context, "/Detalhe", arguments: job['id']);
                                 },
-                                child: _buildCard("Encanador URGEN...",
-                                    "R\$ 200,00", 'assets/home/encanador.png'),
-                              ),
-                              // Card 3
-                              _buildCard("Eletricista para...", "R\$ 150,00",
-                                  'assets/home/eletricista.png'),
-                            ],
+                                child: _buildCard(
+                                  job['titulo'],
+                                  "R\$ ${job['preco']}",
+                                  job['imagem'],
+                                ),
+                              );
+                            }).toList(),
                           ),
-                        ),
+                        )
+                        ,
                       ],
                     ),
                   ),
@@ -205,7 +207,17 @@ class _HomeState extends State<Home> {
           ),
         ),
         const SizedBox(height: 5),
-        Text(title, style: const TextStyle(fontSize: 15)),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0), // Adiciona padding horizontal
+          child: Text(
+            title,
+            style: const TextStyle(fontSize: 15),
+            overflow: TextOverflow.ellipsis, // Adiciona o tratamento de overflow
+            maxLines: 1, // Limita a uma linha
+          ),
+        ),
+
+
         const SizedBox(height: 3),
         Text(
           price,
@@ -218,4 +230,23 @@ class _HomeState extends State<Home> {
       ],
     );
   }
+
+  Future<List<dynamic>> _loadJobs() async {
+      String jsonString = await rootBundle.loadString('assets/json/jobs.json');
+      List<dynamic> jobs = json.decode(jsonString);
+      return jobs;
+  }
+
+  List<dynamic> jobs = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadJobs().then((data) {
+      setState(() {
+        jobs = data;
+      });
+    });
+  }
+
 }

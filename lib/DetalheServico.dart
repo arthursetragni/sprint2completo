@@ -32,6 +32,9 @@ class _DetalheServivoState extends State<DetalheServivo> {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    final int trabalhoId = ModalRoute.of(context)!.settings.arguments as int;
+
+    //print(trabalhoId);
 
     return Scaffold(
       appBar: AppBar(),
