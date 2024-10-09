@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'home.dart';
 import 'package:login/widgets/block_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -137,4 +138,22 @@ class _LoginState extends State<Login> {
       ),
     );
   }
+
+  // _salvaDados() async{
+  //   final prefs = await SharedPreferences.getInstance();
+  //   await prefs.setString("nome", _controller.text);
+  // }
+
+
+  // _recuperaDados() async{
+  //   final prefs = await SharedPreferences.getInstance();
+  //   setState(() {
+  //     _textoSalvo = prefs.getString("nome") ?? "sem valor";
+  //   });
+  // }
+
+  // _removerDados() async{
+  //   final prefs = await SharedPreferences.getInstance();
+  //   prefs.remove("nome");
+  // }
 }
