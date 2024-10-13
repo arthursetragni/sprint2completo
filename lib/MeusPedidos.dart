@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:login/widgets/barra_nav.dart';
+import 'widgets/barra_nav.dart';
 
 class MeusPedidosPage extends StatefulWidget {
   @override
@@ -35,7 +37,8 @@ class _MeusPedidosPageState extends State<MeusPedidosPage> {
               Tab(text: 'Concluídos'),
             ],
           ),
-          backgroundColor: const Color.fromARGB(255, 251, 251, 251), // Ajuste do fundo da AppBar para combinar
+          backgroundColor: const Color.fromARGB(
+              255, 251, 251, 251), // Ajuste do fundo da AppBar para combinar
         ),
         body: TabBarView(
           children: [
@@ -43,6 +46,7 @@ class _MeusPedidosPageState extends State<MeusPedidosPage> {
             PedidosConcluidos(),
           ],
         ),
+        bottomNavigationBar: const BarraNav(),
       ),
     );
   }
@@ -122,9 +126,11 @@ class PedidoCard extends StatelessWidget {
     return Card(
       margin: EdgeInsets.all(10),
       child: ListTile(
-        leading: Image.asset(pedido.imagem, width: 50, height: 50, fit: BoxFit.cover),
+        leading: Image.asset(pedido.imagem,
+            width: 50, height: 50, fit: BoxFit.cover),
         title: Text(pedido.titulo),
-        subtitle: Text('Funcionário: ${pedido.funcionario}\nData: ${pedido.data}'),
+        subtitle:
+            Text('Funcionário: ${pedido.funcionario}\nData: ${pedido.data}'),
         isThreeLine: true,
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:login/widgets/block_button.dart';
+import 'widgets/input_login.dart';
 
 class Cadastro extends StatefulWidget {
   const Cadastro({super.key});
@@ -40,49 +41,20 @@ class _CadastroState extends State<Cadastro> {
             ),
             // Row dos inputs de cadastro
             // Nome
-            const Text(
-              "Nome",
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            const TextField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Insira seu nome completo',
-              ),
-            ),
+            InputLogin(
+                title: 'Nome',
+                label: 'Insira seu nome completo',
+                isPassword: false),
             const SizedBox(height: 20),
             // E-mail
-            const Text(
-              "E-mail",
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            const TextField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Insira seu melhor E-mail',
-              ),
-            ),
+            InputLogin(
+                title: 'E-mail',
+                label: 'Insira seu melhor E-mail',
+                isPassword: false),
             const SizedBox(height: 20),
             // Senha
-            const Text(
-              "Senha",
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            const TextField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Crie uma senha',
-              ),
-            ),
+            InputLogin(
+                title: 'Senha', label: 'Crie uma senha', isPassword: true),
             const SizedBox(height: 20),
             // Botão de login
             BlockButton(
