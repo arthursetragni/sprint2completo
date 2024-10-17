@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'widgets/barra_nav.dart';
 // void main() => runApp(MyApp());
 
 class MeuPerfil extends StatelessWidget {
@@ -73,6 +73,7 @@ class MeuPerfil extends StatelessWidget {
             ),
           ),
         ),
+        bottomNavigationBar: BarraNav(),
       ),
     );
   }

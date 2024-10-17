@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:login/widgets/barra_nav.dart';
+import 'widgets/barra_nav.dart';
 import 'widgets/botao_recebe_icon.dart';
 
 class MeusPedidosPage extends StatefulWidget {
   @override
   _MeusPedidosPageState createState() => _MeusPedidosPageState();
 }
+
 //página em si
 class _MeusPedidosPageState extends State<MeusPedidosPage> {
   @override
@@ -36,7 +39,8 @@ class _MeusPedidosPageState extends State<MeusPedidosPage> {
               Tab(text: 'Concluídos'),
             ],
           ),
-          backgroundColor: const Color.fromARGB(255, 251, 251, 251), // Ajuste do fundo da AppBar para combinar
+          backgroundColor: const Color.fromARGB(
+              255, 251, 251, 251), // Ajuste do fundo da AppBar para combinar
         ),
         body: TabBarView(
           children: [
@@ -44,6 +48,7 @@ class _MeusPedidosPageState extends State<MeusPedidosPage> {
             PedidosConcluidos(),
           ],
         ),
+        bottomNavigationBar: const BarraNav(),
       ),
     );
   }
@@ -53,7 +58,8 @@ class _MeusPedidosPageState extends State<MeusPedidosPage> {
 class PedidosEmAndamento extends StatelessWidget {
   final List<Pedido> pedidos = [
     Pedido(
-        imagem: 'https://st4.depositphotos.com/1203257/27909/i/450/depositphotos_279097904-stock-photo-hedge-trimming-work.jpg',
+        imagem:
+            'https://st4.depositphotos.com/1203257/27909/i/450/depositphotos_279097904-stock-photo-hedge-trimming-work.jpg',
         titulo: 'Limpeza de Jardim',
         funcionario: 'Carlos Silva',
         data: '01/10/2024'),
@@ -74,16 +80,19 @@ class PedidosEmAndamento extends StatelessWidget {
     );
   }
 }
+
 //área dos pedidos concluídos
 class PedidosConcluidos extends StatelessWidget {
   final List<Pedido> pedidos = [
     Pedido(
-        imagem: 'https://thumbs.dreamstime.com/z/pintor-que-pinta-uma-parede-com-rolo-de-pintura-70939583.jpg',
+        imagem:
+            'https://thumbs.dreamstime.com/z/pintor-que-pinta-uma-parede-com-rolo-de-pintura-70939583.jpg',
         titulo: 'Pintura Residencial',
         funcionario: 'João Pedro',
         data: '25/09/2024'),
     Pedido(
-        imagem: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlIk-WqYKq3v4FvTYuPGsrhNPQ2QAMmCtARw&s',
+        imagem:
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlIk-WqYKq3v4FvTYuPGsrhNPQ2QAMmCtARw&s',
         titulo: 'Instalação de Ar-condicionado',
         funcionario: 'Maria Clara',
         data: '20/09/2024'),
@@ -99,6 +108,7 @@ class PedidosConcluidos extends StatelessWidget {
     );
   }
 }
+
 //classe pedido
 class Pedido {
   final String imagem;
@@ -113,6 +123,7 @@ class Pedido {
     required this.data,
   });
 }
+
 //card sem estrela
 class PedidoCardSemIcon extends StatelessWidget {
   final Pedido pedido;
@@ -124,9 +135,11 @@ class PedidoCardSemIcon extends StatelessWidget {
     return Card(
       margin: EdgeInsets.all(10),
       child: ListTile(
-        leading: Image.network(pedido.imagem, width:100, height: 110, fit: BoxFit.cover),
+        leading: Image.network(pedido.imagem,
+            width: 100, height: 110, fit: BoxFit.cover),
         title: Text(pedido.titulo),
-        subtitle: Text('Funcionário: ${pedido.funcionario}\nData: ${pedido.data}'),
+        subtitle:
+            Text('Funcionário: ${pedido.funcionario}\nData: ${pedido.data}'),
         isThreeLine: true,
       ),
     );
@@ -184,4 +197,3 @@ class PedidoCardComIcon extends StatelessWidget {
     );
   }
 }
-

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'home.dart';
+import 'widgets/input_login.dart';
 import 'package:login/widgets/block_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:login/widgets/block_button_login.dart';
+import 'widgets/barra_nav.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -46,33 +48,18 @@ class _LoginState extends State<Login> {
                 height: 20,
               ),
               // Parte do input com texto 1
-              const Text(
-                "Email",
-                style: TextStyle(fontSize: 16),
+              InputLogin(
+                title: "E-mail",
+                label: 'Seu melhor E-mail',
+                isPassword: false,
               ),
-              const SizedBox(height: 10),
-              const TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Seu melhor Email',
-                ),
-              ),
-
               const SizedBox(height: 20),
 
               // Parte do input com texto 2 (senha)
-              const Text(
-                "Senha",
-                style: TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 10),
-              const TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Digite sua senha',
-                ),
-                obscureText: true, // Oculta a senha
-              ),
+              InputLogin(
+                  title: 'Senha',
+                  label: 'Digite sua melhor senha',
+                  isPassword: true),
               const SizedBox(height: 10),
               const Text(
                 'Esqueceu sua senha?',
