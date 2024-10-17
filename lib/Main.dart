@@ -6,6 +6,7 @@ import 'MeuPerfil.dart';
 import 'BarraNavegacao.dart';
 import 'Login.dart';
 import 'home.dart';
+import 'PaginaInicial.dart';
 
 void main() => runApp(const MyApp());
 
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
         '/meuPerfil': (context) => MeuPerfil(),
         '/pesquisa': (context) => BarraNavegacao(),
         '/meusPedidos': (context) => MeusPedidosPage(),
+        '/paginaInicial': (context) => PaginaInicial(),
       },
     );
   }
@@ -45,15 +47,7 @@ class Main extends StatefulWidget {
 class _MainState extends State<Main> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.pushNamed(context, '/login');
-          },
-          child: const Text("Ir para loginr"),
-        ),
-      ),
-    );
+    return PaginaInicial();
   }
 }
+
