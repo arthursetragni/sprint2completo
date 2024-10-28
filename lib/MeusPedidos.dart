@@ -19,16 +19,12 @@ class _MeusPedidosPageState extends State<MeusPedidosPage> {
           title: Center(
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-              decoration: BoxDecoration(
-                color: Colors.red, // Cor de fundo
-                borderRadius: BorderRadius.circular(20), // Bordas arredondadas
-              ),
               child: Text(
                 'Meus Pedidos',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: const Color.fromARGB(255, 0, 0, 0),
                 ),
               ),
             ),
@@ -40,7 +36,7 @@ class _MeusPedidosPageState extends State<MeusPedidosPage> {
             ],
           ),
           backgroundColor: const Color.fromARGB(
-              255, 251, 251, 251), // Ajuste do fundo da AppBar para combinar
+              255, 251, 251, 251), 
         ),
         body: TabBarView(
           children: [
