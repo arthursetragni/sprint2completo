@@ -7,27 +7,31 @@ class ApiService {
 
   ApiService(this.baseUrl);
   // Função genérica para requisições GET
-  // Função GET para buscar o usuário e deserializar em um modelo User
   Future<User?> autenticarUsuario(
       String endpoint, String email, String senha) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/$endpoint'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email, 'senha': senha}),
+        body: jsonEncode({"email": email, "password": senha}),
       );
 
       if (response.statusCode == 200) {
-        final jsonData = json.decode(response.body);
-        return User.fromJson(jsonData); // Converte JSON para User
+        final data = jsonDecode(response.body);
+
+        // Verifica se 'user' está presente e mapeia para um modelo User
+        if (data['user'] != null) {
+          return User.fromJson(data['user']);
+        } else {
+          print("Erro: Dados de usuário não encontrados.");
+        }
       } else {
-        print("Erro ao autenticar: ${response.statusCode}");
-        return null;
+        print("Erro de autenticação: ${response.statusCode}");
       }
     } catch (e) {
-      print("Exceção ao tentar autenticar: $e");
-      return null;
+      print("Exceção ao fazer login: $e");
     }
+    return null;
   }
 
   // Função genérica POST

@@ -1,27 +1,16 @@
 class User {
-  final int id;
-  final String email;
+  final String id;
   final String name;
-  User({
-    required this.id,
-    required this.email,
-    required this.name,
-  });
-  // Método para deserializar o JSON recebido pela API
+  final String email;
+
+  User({required this.id, required this.name, required this.email});
+
+  // Método para converter JSON para o modelo User
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'],
+      id: json['_id'],
       name: json['name'],
       email: json['email'],
     );
-  }
-
-  // Método para serializar o modelo User em JSON, caso necessário
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'email': email,
-    };
   }
 }
