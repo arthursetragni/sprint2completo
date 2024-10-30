@@ -23,18 +23,24 @@ class _LoginState extends State<Login> {
   final apiService = ApiService("https://backend-lddm.vercel.app/");
   User? usuario; // Variável para armazenar o usuário recuperado
 
-  // void recuperarUsuario() async {
-  //   final user = await apiService.getUser('auth/login');
-  //   setState(() {
-  //     usuario = user; // Armazena o usuário recuperado
-  //   });
+  void realizarLogin() async {
+    final email = _emailControllerText.text;
+    final senha = _senhaControllerText.text;
 
-  //   if (usuario != null) {
-  //     print("Usuário recuperado: ${usuario!.name}, Email: ${usuario!.email}");
-  //   } else {
-  //     print("Erro ao recuperar usuário.");
-  //   }
-  // }
+    final user = await apiService.autenticarUsuario('auth/login', email, senha);
+    setState(() {
+      usuario = user; // Armazena o usuário autenticado
+    });
+
+    if (usuario != null) {
+      print("Login bem-sucedido: ${usuario!.name}, Email: ${usuario!.email}");
+      Navigator.pushNamed(context, '/home'); // Navega para a página home
+    } else {
+      print("Erro ao fazer login.");
+      Navigator.pushNamed(context, '/home'); // Navega para a página home
+      // Aqui você pode mostrar um alerta de erro na interface
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +102,7 @@ class _LoginState extends State<Login> {
               BlockButton(
                 icon: Icons.check,
                 label: "Logar",
-                onPressed:,
+                onPressed: realizarLogin,
               ),
               const SizedBox(height: 20),
               Row(
