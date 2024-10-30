@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:login/TelaAvaliacao.dart';
 import 'package:login/widgets/barra_nav.dart';
 import 'widgets/barra_nav.dart';
 import 'widgets/botao_recebe_icon.dart';
@@ -180,16 +181,25 @@ class PedidoCardComIcon extends StatelessWidget {
                   ),
                   Text(
                     'Data: ${pedido.data}',
-                    style: TextStyle(fontSize: 14),
+                    style: const TextStyle(fontSize: 14),
                   ),
                 ],
               ),
             ),
             // Botão de avaliar ao lado do texto
-            BotaoRecebeIcon(Icons.star, iconColor: Colors.yellow),
+            BotaoRecebeIcon(
+              Icons.star, iconColor: Colors.yellow, iconSize: 24,
+              onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => TelaAvaliacao()),
+                );
+              },
+            ),
           ],
         ),
       ),
     );
   }
 }
+
