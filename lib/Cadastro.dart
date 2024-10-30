@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:login/widgets/block_button.dart';
 import 'widgets/input_login.dart';
+import 'services/api_service.dart';
 
 class Cadastro extends StatefulWidget {
   const Cadastro({super.key});
@@ -10,6 +11,56 @@ class Cadastro extends StatefulWidget {
 }
 
 class _CadastroState extends State<Cadastro> {
+  // Url base
+  final apiService = ApiService("https://backend-lddm.vercel.app/");
+  // Controladores dos inputs
+  final TextEditingController _nomeController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _senhaController = TextEditingController();
+  final TextEditingController _confirmarSenhaController =
+      TextEditingController();
+  void testConection() {
+    apiService.conexaoGet();
+  }
+
+  void cadastrarUsuario() async {
+    String nome = _nomeController.text;
+    String email = _emailController.text;
+    String senha = _senhaController.text;
+    String confirmarSenha = _confirmarSenhaController.text;
+    if (senha != confirmarSenha) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('As senhas não coincidem!')),
+      );
+      return;
+    }
+
+    print(
+        "nome: $nome \nemail: $email\nsenha: $senha\nconfirmarSenha: $confirmarSenha");
+    // Cria um mapa com os dados
+    Map<String, dynamic> userData = {
+      "name": nome,
+      "email": email,
+      "password": senha,
+      "confirmPassword": confirmarSenha,
+    };
+    // Chamando o serviço da api
+    final response = await apiService.conexaoPost("auth/register", userData);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Cadastro realizado com sucesso!')),
+      );
+    } else if (response.statusCode == 422) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Usuário já existe!')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro no cadastro: ${response.statusCode}')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,23 +95,39 @@ class _CadastroState extends State<Cadastro> {
             InputLogin(
                 title: 'Nome',
                 label: 'Insira seu nome completo',
-                isPassword: false),
+                isPassword: false,
+                controller: _nomeController),
             const SizedBox(height: 20),
             // E-mail
             InputLogin(
-                title: 'E-mail',
-                label: 'Insira seu melhor E-mail',
-                isPassword: false),
+              title: 'E-mail',
+              label: 'Insira seu melhor E-mail',
+              isPassword: false,
+              controller: _emailController,
+            ),
+
             const SizedBox(height: 20),
             // Senha
             InputLogin(
-                title: 'Senha', label: 'Crie uma senha', isPassword: true),
+              title: 'Senha',
+              label: 'Crie uma senha',
+              isPassword: true,
+              controller: _senhaController,
+            ),
             const SizedBox(height: 20),
             // Botão de login
+            InputLogin(
+              title: 'Confirmar Senha',
+              label: 'Confirme sua senha',
+              isPassword: true,
+              controller: _confirmarSenhaController,
+            ),
+            const SizedBox(height: 20),
             BlockButton(
-                icon: Icons.check,
-                label: "Cadastrar",
-                onPressed: () => {Navigator.pushNamed(context, '/home')}),
+              icon: Icons.check,
+              label: "Cadastrar",
+              onPressed: cadastrarUsuario,
+            ),
             const SizedBox(height: 20),
 
             Row(

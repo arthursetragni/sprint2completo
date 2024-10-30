@@ -14,6 +14,8 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final TextEditingController _emailControllerText = TextEditingController();
+  final TextEditingController _senhaControllerText = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,14 +53,18 @@ class _LoginState extends State<Login> {
                 title: "E-mail",
                 label: 'Seu melhor E-mail',
                 isPassword: false,
+                controller: _emailControllerText,
               ),
               const SizedBox(height: 20),
 
               // Parte do input com texto 2 (senha)
               InputLogin(
-                  title: 'Senha',
-                  label: 'Digite sua melhor senha',
-                  isPassword: true),
+                title: 'Senha',
+                label: 'Digite sua melhor senha',
+                isPassword: true,
+                controller: _senhaControllerText,
+              ),
+
               const SizedBox(height: 10),
               const Text(
                 'Esqueceu sua senha?',
