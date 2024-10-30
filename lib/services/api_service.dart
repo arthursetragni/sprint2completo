@@ -1,22 +1,32 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../models/User.dart';
 
 class ApiService {
   final String baseUrl;
 
   ApiService(this.baseUrl);
   // Função genérica para requisições GET
-  Future<void> conexaoGet() async {
+  // Função GET para buscar o usuário e deserializar em um modelo User
+  Future<User?> autenticarUsuario(
+      String endpoint, String email, String senha) async {
     try {
-      final response = await http.get(Uri.parse(baseUrl));
+      final response = await http.post(
+        Uri.parse('$baseUrl/$endpoint'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email, 'senha': senha}),
+      );
 
       if (response.statusCode == 200) {
-        print("Conexão bem-sucedida: ${response.body}");
+        final jsonData = json.decode(response.body);
+        return User.fromJson(jsonData); // Converte JSON para User
       } else {
-        print("Erro ao conectar: ${response.statusCode}");
+        print("Erro ao autenticar: ${response.statusCode}");
+        return null;
       }
     } catch (e) {
-      print("Exceção ao tentar conectar: $e");
+      print("Exceção ao tentar autenticar: $e");
+      return null;
     }
   }
 

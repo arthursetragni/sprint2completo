@@ -19,10 +19,6 @@ class _CadastroState extends State<Cadastro> {
   final TextEditingController _senhaController = TextEditingController();
   final TextEditingController _confirmarSenhaController =
       TextEditingController();
-  void testConection() {
-    apiService.conexaoGet();
-  }
-
   void cadastrarUsuario() async {
     String nome = _nomeController.text;
     String email = _emailController.text;

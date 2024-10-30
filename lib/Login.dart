@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:login/models/User.dart';
 import 'home.dart';
 import 'widgets/input_login.dart';
 import 'package:login/widgets/block_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:login/widgets/block_button_login.dart';
 import 'widgets/barra_nav.dart';
+import 'services/api_service.dart';
+import 'models/User.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -16,6 +19,23 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final TextEditingController _emailControllerText = TextEditingController();
   final TextEditingController _senhaControllerText = TextEditingController();
+  // Url base
+  final apiService = ApiService("https://backend-lddm.vercel.app/");
+  User? usuario; // Variável para armazenar o usuário recuperado
+
+  // void recuperarUsuario() async {
+  //   final user = await apiService.getUser('auth/login');
+  //   setState(() {
+  //     usuario = user; // Armazena o usuário recuperado
+  //   });
+
+  //   if (usuario != null) {
+  //     print("Usuário recuperado: ${usuario!.name}, Email: ${usuario!.email}");
+  //   } else {
+  //     print("Erro ao recuperar usuário.");
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,9 +94,10 @@ class _LoginState extends State<Login> {
 
               // Botão de login
               BlockButton(
-                  icon: Icons.check,
-                  label: "Logar",
-                  onPressed: () => {Navigator.pushNamed(context, '/home')}),
+                icon: Icons.check,
+                label: "Logar",
+                onPressed:,
+              ),
               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
