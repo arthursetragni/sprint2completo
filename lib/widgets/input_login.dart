@@ -4,12 +4,14 @@ class InputLogin extends StatelessWidget {
   final String title;
   final String label;
   final bool isPassword;
+  final TextEditingController controller;
 
   const InputLogin({
     super.key,
     required this.title,
     required this.label,
     required this.isPassword,
+    required this.controller,
   });
 
   @override
@@ -24,6 +26,7 @@ class InputLogin extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           TextField(
+            controller: controller,
             obscureText: isPassword,
             decoration: InputDecoration(
               border: const OutlineInputBorder(),
