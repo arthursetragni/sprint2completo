@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:login/Cadastro.dart';
 import 'package:login/MeusPedidos.dart';
 import 'DetalheServico.dart';
-import 'MeuPerfil.dart';
+// import 'MeuPerfil.dart';
 import 'BarraNavegacao.dart';
 import 'Login.dart';
 import 'home.dart';
@@ -49,4 +49,3 @@ class _MainState extends State<Main> {
     return PaginaInicial();
   }
 }
-
