@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:login/MeuPerfil.dart';
 import 'package:login/models/User.dart';
 import 'home.dart';
 import 'widgets/input_login.dart';
@@ -26,19 +27,38 @@ class _LoginState extends State<Login> {
   void realizarLogin() async {
     final email = _emailControllerText.text;
     final senha = _senhaControllerText.text;
-
-    final user = await apiService.autenticarUsuario('auth/login', email, senha);
+    final response = await apiService.logarUsuario('auth/login', email, senha);
+    usuario = response['user'];
+    final int statusCode = response['statusCode'];
     setState(() {
-      usuario = user; // Armazena o usuário autenticado
+      this.usuario = usuario; // Armazena o usuário autenticado
     });
 
     if (usuario != null) {
       print("Login bem-sucedido: ${usuario!.name}, Email: ${usuario!.email}");
-      Navigator.pushNamed(context, '/home'); // Navega para a página home
+      // print(usuario!.id);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => MeuPerfil(
+                    usuario: User(
+                  name: usuario!.name,
+                  email: usuario!.email,
+                  id: usuario!.id,
+                ))),
+      );
     } else {
-      print("Erro ao fazer login.");
-      Navigator.pushNamed(context, '/home'); // Navega para a página home
-      // Aqui você pode mostrar um alerta de erro na interface
+      String errorMessage;
+      if (statusCode == 1) {
+        errorMessage = 'Usuário não encontrado. Verifique as credenciais.';
+      } else if (statusCode == 2) {
+        errorMessage = 'Senha incorreta. Tente novamente.';
+      } else {
+        errorMessage = 'Erro ao fazer login. Tente novamente mais tarde.';
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage)),
+      );
     }
   }
 

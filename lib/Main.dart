@@ -27,7 +27,6 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const Home(),
         '/Detalhe': (context) => const DetalheServivo(),
         '/cadastro': (context) => const Cadastro(),
-        '/meuPerfil': (context) => MeuPerfil(),
         '/pesquisa': (context) => BarraNavegacao(),
         '/meusPedidos': (context) => MeusPedidosPage(),
       },

@@ -6,35 +6,38 @@ class ApiService {
   final String baseUrl;
 
   ApiService(this.baseUrl);
-  // Função genérica para requisições GET
-  Future<User?> autenticarUsuario(
+  // Função para recuperar dados de usuário
+  Future<Map<String, dynamic>> logarUsuario(
       String endpoint, String email, String senha) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/$endpoint'),
+        Uri.parse('$baseUrl$endpoint'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({"email": email, "password": senha}),
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-
         // Verifica se 'user' está presente e mapeia para um modelo User
         if (data['user'] != null) {
-          return User.fromJson(data['user']);
+          return {'user': User.fromJson(data['user']), 'statusCode': 200};
         } else {
           print("Erro: Dados de usuário não encontrados.");
+          return {'user': null, 'statusCode': 500};
         }
       } else {
-        print("Erro de autenticação: ${response.statusCode}");
+        final Map<String, dynamic> respostaErro = jsonDecode(response.body);
+        print("Erro de autenticação: ${response.body}");
+
+        return {'user': null, 'statusCode': respostaErro['code']};
       }
     } catch (e) {
       print("Exceção ao fazer login: $e");
+      return {'user': null, 'statusCode': 500};
     }
-    return null;
   }
 
-  // Função genérica POST
+  // Função para fazer o register do user
   Future<http.Response> conexaoPost(
       String endpoint, Map<String, dynamic> data) async {
     try {

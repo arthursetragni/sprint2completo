@@ -7,9 +7,11 @@ import 'widgets/ActionButton.dart';
 import 'widgets/genero_botao.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'models/User.dart';
 
 class MeuPerfil extends StatefulWidget {
-  const MeuPerfil({super.key});
+  final User usuario;
+  const MeuPerfil({required this.usuario});
 
   @override
   State<MeuPerfil> createState() => _MeuPerfilState();
@@ -22,8 +24,18 @@ class _MeuPerfilState extends State<MeuPerfil> {
   final localizacaoController = TextEditingController();
   DateTime? dataNascimento;
   String genero = 'Masculino';
-  String idUsuario = "672283fe0c651877e24e5378";
+  String? idUsuario;
   String rotaBackEnd = 'https://backend-lddm.vercel.app';
+
+  @override
+  void initState() {
+    super.initState();
+    nomeController.text = widget.usuario.name;
+    emailController.text = widget.usuario.email;
+    idUsuario = widget.usuario.id;
+    print(
+        "${widget.usuario.name}, ${widget.usuario.email}, ${widget.usuario.id}");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,11 +66,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
                 children: [
                   Stack(
                     children: [
-                      const CircleAvatar(
-                        radius: 40,
-                        backgroundImage:
-                            AssetImage('assets/register/default_profile.png'),
-                      ),
+                      const CircleAvatar(radius: 40),
                       Positioned(
                         bottom: 0,
                         right: 0,
@@ -145,21 +153,33 @@ class _MeuPerfilState extends State<MeuPerfil> {
                 children: [
                   AccountActions(
                     onConfirm: () {
+                      if (idUsuario != null) {
+                        updateUser(idUsuario!).then((_) {
+                          User usuarioAtualizado = User(
+                            email: emailController.text,
+                            name: nomeController.text,
+                            id: idUsuario!,
+                          );
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  MeuPerfil(usuario: usuarioAtualizado),
+                            ),
+                          );
+                        });
+                      } else {
+                        print("Erro: idUsuario é nulo");
+                      }
                       // Lógica para salvar as alterações
-                      updateUser(idUsuario).then((_) {
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                              builder: (context) => const MeuPerfil()),
-                        );
-                      });
                     },
                     onDelete: () {
-                      deleteUser(idUsuario).then((_) {
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                              builder: (context) => const Login()),
-                        );
-                      });
+                      if (idUsuario != null) {
+                        deleteUser(idUsuario!).then((_) {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(builder: (context) => Login()),
+                          );
+                        });
+                      }
                     },
                   ),
                 ],
@@ -173,7 +193,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
   }
 
   Future<void> deleteUser(String id) async {
-    final url = Uri.parse(rotaBackEnd + '/user/$id');
+    final url = Uri.parse('$rotaBackEnd/user/$id');
     try {
       final response = await http.delete(url);
       if (response.statusCode == 200) {
@@ -188,7 +208,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
 
   // Função para enviar os dados ao backend
   Future<void> updateUser(String id) async {
-    final url = Uri.parse(rotaBackEnd + '/user/update/$id');
+    final url = Uri.parse('$rotaBackEnd/user/update/$id');
     final data = {
       'name': nomeController.text,
       'email': emailController.text,
@@ -208,14 +228,14 @@ class _MeuPerfilState extends State<MeuPerfil> {
       if (response.statusCode == 200) {
         print('Usuário atualizado com sucesso :)');
         // Limpa os campos após o envio
-        setState(() {
-          nomeController.clear();
-          emailController.clear();
-          telefoneController.clear();
-          localizacaoController.clear();
-          dataNascimento = null;
-          genero = 'Masculino';
-        });
+        // Quem colocou isso? Nem faz sentido
+        // setState(() {
+        //   nomeController.clear();
+        //   emailController.clear();
+        //   telefoneController.clear();
+        //   localizacaoController.clear();
+        //   dataNascimento = null;
+        //   genero = 'Masculino';
       } else {
         print('Falha ao atualizar usuário: ${response.statusCode}');
       }

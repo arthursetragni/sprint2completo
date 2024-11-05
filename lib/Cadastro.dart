@@ -135,7 +135,7 @@ class _CadastroState extends State<Cadastro> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushNamed(context, '/cadastro');
+                    Navigator.pushNamed(context, '/login');
                   },
                   child: const Text(
                     "Logar",
