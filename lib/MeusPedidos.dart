@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:login/TelaAvaliacao.dart';
 import 'package:login/widgets/barra_nav.dart';
 import 'widgets/barra_nav.dart';
 import 'widgets/botao_recebe_icon.dart';
@@ -19,16 +20,12 @@ class _MeusPedidosPageState extends State<MeusPedidosPage> {
           title: Center(
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-              decoration: BoxDecoration(
-                color: Colors.red, // Cor de fundo
-                borderRadius: BorderRadius.circular(20), // Bordas arredondadas
-              ),
               child: Text(
                 'Meus Pedidos',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: const Color.fromARGB(255, 0, 0, 0),
                 ),
               ),
             ),
@@ -40,7 +37,7 @@ class _MeusPedidosPageState extends State<MeusPedidosPage> {
             ],
           ),
           backgroundColor: const Color.fromARGB(
-              255, 251, 251, 251), // Ajuste do fundo da AppBar para combinar
+              255, 251, 251, 251), 
         ),
         body: TabBarView(
           children: [
@@ -184,16 +181,25 @@ class PedidoCardComIcon extends StatelessWidget {
                   ),
                   Text(
                     'Data: ${pedido.data}',
-                    style: TextStyle(fontSize: 14),
+                    style: const TextStyle(fontSize: 14),
                   ),
                 ],
               ),
             ),
             // Botão de avaliar ao lado do texto
-            BotaoRecebeIcon(Icons.star, iconColor: Colors.yellow),
+            BotaoRecebeIcon(
+              Icons.star, iconColor: Colors.yellow, iconSize: 24,
+              onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => TelaAvaliacao()),
+                );
+              },
+            ),
           ],
         ),
       ),
     );
   }
 }
+
