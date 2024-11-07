@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:login/MeuPerfil.dart';
 import 'package:login/models/User.dart';
@@ -23,43 +24,81 @@ class _LoginState extends State<Login> {
   final TextEditingController _senhaControllerText = TextEditingController();
   // Url base
   final apiService = ApiService("https://backend-lddm.vercel.app/");
-  User? usuario; // Variável para armazenar o usuário recuperado
+  late User? usuario; // Variável para armazenar o usuário recuperado
+  @override
+  void initState() {
+    super.initState();
+    _verificarUsuarioLogado();
+  }
+
+  Future<void> _verificarUsuarioLogado() async {
+    final prefs = await SharedPreferences.getInstance();
+    final usuarioJson = prefs.getString("usuario");
+    if (usuarioJson != null) {
+      setState(() {
+        usuario = User.fromJson(jsonDecode(usuarioJson));
+      });
+      Navigator.pushReplacementNamed(context, '/home');
+    } else {
+      print('nenhum usuario já logado');
+    }
+  }
+
+  Future<void> saveUser(User user) async {
+    print("salvando usuario...");
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString("usuario", jsonEncode(user.toJson()));
+    print("Sucesso!");
+  }
+
+  Future<void> printUsuarioSalvo() async {
+    print("printando usuario");
+    final prefs = await SharedPreferences.getInstance();
+    final usuarioJson = prefs.getString("usuario");
+
+    if (usuarioJson != null) {
+      final user = User.fromJson(jsonDecode(usuarioJson));
+      print(
+          "Usuário salvo: Nome: ${user.name}, Email: ${user.email}, Id : ${user.id}");
+    } else {
+      print("Nenhum usuário salvo encontrado.");
+    }
+  }
 
   void realizarLogin() async {
     final email = _emailControllerText.text;
     final senha = _senhaControllerText.text;
     final response = await apiService.logarUsuario('auth/login', email, senha);
-    usuario = response['user'];
+    print(response['user']);
     final int statusCode = response['statusCode'];
-    setState(() {
-      this.usuario = usuario; // Armazena o usuário autenticado
-    });
+    if (response['user'] != null) {
+      usuario = response['user'];
+      print("CADE MEU ID? ");
+      print(usuario!.id);
+      print(usuario!.name);
+      print(usuario!.email);
+      setState(() {
+        this.usuario = usuario;
+      });
 
-    if (usuario != null) {
-      print("Login bem-sucedido: ${usuario!.name}, Email: ${usuario!.email}");
-      // print(usuario!.id);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => MeuPerfil(
-                    usuario: User(
-                  name: usuario!.name,
-                  email: usuario!.email,
-                  id: usuario!.id,
-                ))),
-      );
-    } else {
-      String errorMessage;
-      if (statusCode == 1) {
-        errorMessage = 'Usuário não encontrado. Verifique as credenciais.';
-      } else if (statusCode == 2) {
-        errorMessage = 'Senha incorreta. Tente novamente.';
+      if (usuario != null) {
+        print("Login bem-sucedido: ${usuario!.name}, Email: ${usuario!.email}");
+        await saveUser(usuario!);
+        await printUsuarioSalvo();
+        Navigator.pushReplacementNamed(context, '/home');
       } else {
-        errorMessage = 'Erro ao fazer login. Tente novamente mais tarde.';
+        String errorMessage;
+        if (statusCode == 1) {
+          errorMessage = 'Usuário não encontrado. Verifique as credenciais.';
+        } else if (statusCode == 2) {
+          errorMessage = 'Senha incorreta. Tente novamente.';
+        } else {
+          errorMessage = 'Erro ao fazer login. Tente novamente mais tarde.';
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage)),
+        );
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage)),
-      );
     }
   }
 
@@ -178,21 +217,4 @@ class _LoginState extends State<Login> {
       ),
     );
   }
-
-  // _salvaDados() async{
-  //   final prefs = await SharedPreferences.getInstance();
-  //   await prefs.setString("nome", _controller.text);
-  // }
-
-  // _recuperaDados() async{
-  //   final prefs = await SharedPreferences.getInstance();
-  //   setState(() {
-  //     _textoSalvo = prefs.getString("nome") ?? "sem valor";
-  //   });
-  // }
-
-  // _removerDados() async{
-  //   final prefs = await SharedPreferences.getInstance();
-  //   prefs.remove("nome");
-  // }
 }

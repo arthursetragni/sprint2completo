@@ -7,12 +7,10 @@ import 'widgets/ActionButton.dart';
 import 'widgets/genero_botao.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'models/User.dart';
 
 class MeuPerfil extends StatefulWidget {
-  final User usuario;
-  const MeuPerfil({required this.usuario});
-
   @override
   State<MeuPerfil> createState() => _MeuPerfilState();
 }
@@ -30,11 +28,48 @@ class _MeuPerfilState extends State<MeuPerfil> {
   @override
   void initState() {
     super.initState();
-    nomeController.text = widget.usuario.name;
-    emailController.text = widget.usuario.email;
-    idUsuario = widget.usuario.id;
-    print(
-        "${widget.usuario.name}, ${widget.usuario.email}, ${widget.usuario.id}");
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    print('Buscando dados salvos no meuPerfil');
+    final prefs = await SharedPreferences.getInstance();
+    final usuarioJson = prefs.getString("usuario");
+    User? usuario;
+
+    if (usuarioJson != null) {
+      setState(() {
+        usuario = User.fromJson(jsonDecode(usuarioJson));
+      });
+    }
+
+    if (usuario != null) {
+      print("Valores recuperados");
+
+      // Preenchendo os controladores com os valores do usuário
+      setState(() {
+        nomeController.text = usuario!.name; // Assume que o nome não é nulo
+        emailController.text = usuario!.email; // Assume que o email não é nulo
+        telefoneController.text = prefs.getString('telefone') ?? '';
+        localizacaoController.text = prefs.getString('localizacao') ?? '';
+        dataNascimento =
+            DateTime.tryParse(prefs.getString('dataNascimento') ?? '');
+        genero = prefs.getString('genero') ?? '';
+        idUsuario = prefs.getString('id');
+      });
+    }
+  }
+
+  Future<void> _saveUserData(User user) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('name', user.name);
+    await prefs.setString('email', user.email);
+    await prefs.setString('telefone', telefoneController.text);
+    await prefs.setString('localizacao', localizacaoController.text);
+    await prefs.setString(
+        'dataNascimento', dataNascimento?.toIso8601String() ?? '');
+    await prefs.setString('genero', genero);
+    await prefs.setString('id', user.id);
   }
 
   @override
@@ -100,7 +135,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
               // Campos editáveis
               EditableField(
                 title: 'Nome',
-                initialValue: nomeController.text,
+                controller: nomeController,
                 onChanged: (value) {
                   nomeController.text = value;
                   print("Nome alterado para $value");
@@ -108,7 +143,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
               ),
               EditableField(
                 title: 'Email',
-                initialValue: emailController.text,
+                controller: emailController,
                 onChanged: (value) {
                   emailController.text = value;
                   print("Email alterado para $value");
@@ -132,7 +167,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
               ),
               EditableField(
                 title: 'Telefone',
-                initialValue: telefoneController.text,
+                controller: telefoneController,
                 onChanged: (value) {
                   telefoneController.text = value;
                   print("Telefone alterado para $value");
@@ -140,7 +175,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
               ),
               EditableField(
                 title: 'Localização',
-                initialValue: localizacaoController.text,
+                controller: localizacaoController,
                 onChanged: (value) {
                   localizacaoController.text = value;
                   print("Localização alterada para $value");
@@ -155,22 +190,16 @@ class _MeuPerfilState extends State<MeuPerfil> {
                     onConfirm: () {
                       if (idUsuario != null) {
                         updateUser(idUsuario!).then((_) {
-                          User usuarioAtualizado = User(
-                            email: emailController.text,
-                            name: nomeController.text,
-                            id: idUsuario!,
-                          );
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
                               builder: (context) =>
-                                  MeuPerfil(usuario: usuarioAtualizado),
+                                  MeuPerfil(), // Removido o argumento `usuario`
                             ),
                           );
                         });
                       } else {
                         print("Erro: idUsuario é nulo");
                       }
-                      // Lógica para salvar as alterações
                     },
                     onDelete: () {
                       if (idUsuario != null) {
@@ -192,21 +221,6 @@ class _MeuPerfilState extends State<MeuPerfil> {
     );
   }
 
-  Future<void> deleteUser(String id) async {
-    final url = Uri.parse('$rotaBackEnd/user/$id');
-    try {
-      final response = await http.delete(url);
-      if (response.statusCode == 200) {
-        print('Usuário deletado com sucesso :)');
-      } else {
-        print('Falha ao deletar usuário: ${response.statusCode}');
-      }
-    } catch (error) {
-      print('Erro na conexão: $error');
-    }
-  }
-
-  // Função para enviar os dados ao backend
   Future<void> updateUser(String id) async {
     final url = Uri.parse('$rotaBackEnd/user/update/$id');
     final data = {
@@ -227,17 +241,36 @@ class _MeuPerfilState extends State<MeuPerfil> {
 
       if (response.statusCode == 200) {
         print('Usuário atualizado com sucesso :)');
-        // Limpa os campos após o envio
-        // Quem colocou isso? Nem faz sentido
-        // setState(() {
-        //   nomeController.clear();
-        //   emailController.clear();
-        //   telefoneController.clear();
-        //   localizacaoController.clear();
-        //   dataNascimento = null;
-        //   genero = 'Masculino';
+        User usuarioAtualizado = User(
+          email: emailController.text,
+          name: nomeController.text,
+          id: idUsuario!,
+        );
+        await _saveUserData(usuarioAtualizado);
+        setState(() {
+          idUsuario = usuarioAtualizado.id;
+        });
       } else {
         print('Falha ao atualizar usuário: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Erro na conexão: $error');
+    }
+  }
+
+  Future<void> deleteUser(String id) async {
+    final url = Uri.parse('$rotaBackEnd/user/$id');
+    try {
+      final response = await http.delete(url);
+      if (response.statusCode == 200) {
+        print('Usuário deletado com sucesso :)');
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.clear(); // Limpa os dados do usuário
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => Login()),
+        );
+      } else {
+        print('Falha ao deletar usuário: ${response.statusCode}');
       }
     } catch (error) {
       print('Erro na conexão: $error');

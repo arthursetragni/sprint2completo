@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 class EditableField extends StatelessWidget {
   final String title;
-  final String initialValue;
-  final ValueChanged<String> onChanged;
+  final TextEditingController controller;
+  final ValueChanged<String>? onChanged;
 
   const EditableField({
     super.key,
     required this.title,
-    required this.initialValue,
-    required this.onChanged,
+    required this.controller,
+    this.onChanged,
   });
 
   @override
@@ -29,10 +29,14 @@ class EditableField extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-          // Campo editável com o conteúdo inicial
+          // Campo editável do controlador
           TextFormField(
-            initialValue: initialValue,
-            onChanged: onChanged,
+            controller: controller,
+            onChanged: (value) {
+              if (onChanged != null) {
+                onChanged!(value);
+              }
+            },
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
               contentPadding:

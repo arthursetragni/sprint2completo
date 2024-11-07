@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:login/Cadastro.dart';
 import 'package:login/MeusPedidos.dart';
 import 'DetalheServico.dart';
-// import 'MeuPerfil.dart';
+import 'MeuPerfil.dart';
 import 'BarraNavegacao.dart';
 import 'Login.dart';
 import 'home.dart';
@@ -30,6 +30,7 @@ class MyApp extends StatelessWidget {
         '/cadastro': (context) => const Cadastro(),
         '/pesquisa': (context) => BarraNavegacao(),
         '/meusPedidos': (context) => MeusPedidosPage(),
+        '/meuPerfil': (context) => MeuPerfil(),
         '/paginaInicial': (context) => PaginaInicial(),
       },
     );
