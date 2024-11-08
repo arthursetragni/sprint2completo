@@ -73,16 +73,11 @@ class _LoginState extends State<Login> {
     final int statusCode = response['statusCode'];
     if (response['user'] != null) {
       usuario = response['user'];
-      print("CADE MEU ID? ");
-      print(usuario!.id);
-      print(usuario!.name);
-      print(usuario!.email);
       setState(() {
         this.usuario = usuario;
       });
 
       if (usuario != null) {
-        print("Login bem-sucedido: ${usuario!.name}, Email: ${usuario!.email}");
         await saveUser(usuario!);
         await printUsuarioSalvo();
         Navigator.pushReplacementNamed(context, '/home');

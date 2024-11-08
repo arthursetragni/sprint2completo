@@ -8,14 +8,14 @@ class User {
   // Método para converter JSON para o modelo User
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'] ?? 'Id desconhecido',
+      id: json['_id'] ?? 'Id desconhecido',
       name: json['name'] ?? 'Nome desconhecido',
       email: json['email'] ?? 'Email desconhecido',
     );
   }
   // Método para converter nosso modelo para Json
   Map<String, dynamic> toJson() => {
-        'id': id,
+        '_id': id,
         'name': name,
         'email': email,
       };
