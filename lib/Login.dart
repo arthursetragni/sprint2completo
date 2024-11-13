@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:login/MeuPerfil.dart';
 import 'package:login/models/User.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'home.dart';
@@ -24,6 +23,7 @@ class _LoginState extends State<Login> {
   final TextEditingController _senhaControllerText = TextEditingController();
   // Url base
   final apiService = ApiService("https://backend-lddm.vercel.app/");
+  // final apiService = ApiService("http://localhost:3000/");
   late User? usuario; // Variável para armazenar o usuário recuperado
   @override
   void initState() {
@@ -59,7 +59,7 @@ class _LoginState extends State<Login> {
     if (usuarioJson != null) {
       final user = User.fromJson(jsonDecode(usuarioJson));
       print(
-          "Usuário salvo: Nome: ${user.name}, Email: ${user.email}, Id : ${user.id}");
+          "Usuário salvo: Nome: ${user.name}, Email: ${user.email}, Id : ${user.id}\n Genêro: ${user.gender}, Telefone: ${user.telephone}, Endereço: ${user.adress}\n Data de Nascimento: ${user.date_of_birth}");
     } else {
       print("Nenhum usuário salvo encontrado.");
     }
