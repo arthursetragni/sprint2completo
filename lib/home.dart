@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 import 'widgets/barra_nav.dart';
+import 'post_job.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -56,32 +57,46 @@ class _HomeState extends State<Home> {
                           child: Stack(
                             clipBehavior: Clip.none,
                             children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                  color: const Color(0xFFCC3733),
-                                ),
-                                padding: const EdgeInsets.all(21),
-                                child: const Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Crie seu Portfólio",
-                                      style: TextStyle(
-                                        color: Color(0xFFFFFFFF),
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
+                              InkWell(
+                                onTap: () {
+                                  // Coloque aqui a ação que deve ocorrer ao clicar
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const PostJob()),
+                                  );
+                                  print("Container clicado!");
+                                },
+                                borderRadius: BorderRadius.circular(
+                                    15), // Para combinar com o formato do Container
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: const Color(0xFFCC3733),
+                                  ),
+                                  padding: const EdgeInsets.all(21),
+                                  child: const Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Crie seu Portfólio",
+                                        style: TextStyle(
+                                          color: Color(0xFFFFFFFF),
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(height: 15),
-                                    Text(
-                                      "Finalize seu perfil antes de prosseguir",
-                                      style: TextStyle(
-                                        color: Color(0xFFFFFFFF),
-                                        fontSize: 14,
+                                      SizedBox(height: 15),
+                                      Text(
+                                        "Finalize seu perfil antes de prosseguir",
+                                        style: TextStyle(
+                                          color: Color(0xFFFFFFFF),
+                                          fontSize: 14,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                               Positioned(

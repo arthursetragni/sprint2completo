@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:login/Login.dart';
-import 'widgets/barra_nav.dart';
-import 'widgets/editable_field.dart';
-import 'widgets/editable_datafield.dart';
-import 'widgets/ActionButton.dart';
-import 'widgets/genero_botao.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'models/User.dart';
+import 'widgets/barra_nav.dart'; //barra de navegação
+//import 'widgets/editable_field.dart'; //campo de texto
+import 'widgets/editable_datafield.dart'; //campo de data
+//import 'widgets/ActionButton.dart'; // old buttons
+import 'widgets/genero_botao.dart'; //campo de gênero
+import 'package:http/http.dart' as http; // Para requisições HTTP
+import 'dart:convert'; // Para decodificar JSON
+import 'package:shared_preferences/shared_preferences.dart'; // Para salvar dados localmente
+import 'models/User.dart'; // Modelo de usuário
+import 'package:awesome_dialog/awesome_dialog.dart'; // Para caixas de diálogo pop up
+import 'widgets/text_editable.dart';
 
 class MeuPerfil extends StatefulWidget {
   @override
@@ -56,6 +58,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
             DateTime.tryParse(prefs.getString('dataNascimento') ?? '');
         genero = prefs.getString('genero') ?? '';
         idUsuario = prefs.getString('id');
+        print("idUsuario Aqui em cima: $idUsuario");
       });
     }
   }
@@ -81,7 +84,8 @@ class _MeuPerfilState extends State<MeuPerfil> {
           color: const Color(0xFFFFFFFF),
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment:
+                CrossAxisAlignment.start, //possível motivo de erro
             children: [
               // Back button
               Row(
@@ -115,15 +119,15 @@ class _MeuPerfilState extends State<MeuPerfil> {
                   ),
                   const SizedBox(width: 12),
                   // Name and profession
-                  const Column(
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Nome do Usuário',
-                        style: TextStyle(
+                        nomeController.text, // Nome do usuário
+                        style: const TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
-                      Text(
+                      const Text(
                         'Profissão',
                         style: TextStyle(fontSize: 14, color: Colors.grey),
                       ),
@@ -131,25 +135,24 @@ class _MeuPerfilState extends State<MeuPerfil> {
                   ),
                 ],
               ),
-
-              // Campos editáveis
-              EditableField(
-                title: 'Nome',
-                controller: nomeController,
-                onChanged: (value) {
-                  nomeController.text = value;
-                  print("Nome alterado para $value");
-                },
+              //editable fields
+              const SizedBox(height: 20),
+              NewEditable(
+                //Nome editable
+                LabelText: "Nome",
+                placeholder: nomeController.text,
+                isPass: false,
               ),
-              EditableField(
-                title: 'Email',
-                controller: emailController,
-                onChanged: (value) {
-                  emailController.text = value;
-                  print("Email alterado para $value");
-                },
+              const SizedBox(height: 20),
+              NewEditable(
+                //email editable
+                LabelText: "E-mail",
+                placeholder: emailController.text,
+                isPass: false,
               ),
+              const SizedBox(height: 20),
               EditableDateField(
+                //data de nascimento editable
                 title: 'Data de Nascimento',
                 initialDate: dataNascimento ?? DateTime(2000, 1, 1),
                 onSave: (value) {
@@ -158,6 +161,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
                 },
               ),
               EditableGenderField(
+                //gênero editable
                 title: 'Gênero',
                 initialGender: genero,
                 onGenderChanged: (value) {
@@ -165,54 +169,110 @@ class _MeuPerfilState extends State<MeuPerfil> {
                   print("Gênero alterado para $value");
                 },
               ),
-              EditableField(
-                title: 'Telefone',
-                controller: telefoneController,
-                onChanged: (value) {
-                  telefoneController.text = value;
-                  print("Telefone alterado para $value");
-                },
+              const SizedBox(height: 20),
+              NewEditable(
+                LabelText: "Telefone",
+                placeholder: telefoneController.text,
+                isPass: false,
               ),
-              EditableField(
-                title: 'Localização',
-                controller: localizacaoController,
-                onChanged: (value) {
-                  localizacaoController.text = value;
-                  print("Localização alterada para $value");
-                },
+              const SizedBox(height: 20),
+              NewEditable(
+                LabelText: "Localização",
+                placeholder: localizacaoController.text,
+                isPass: false,
               ),
 
-              // Botões de ação
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  AccountActions(
-                    onConfirm: () {
-                      if (idUsuario != null) {
-                        updateUser(idUsuario!).then((_) {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  MeuPerfil(), // Removido o argumento `usuario`
-                            ),
+              //old editable
+              //EditableField(
+              //  title: 'Localização',
+              //  controller: localizacaoController,
+              //  onChanged: (value) {
+              //    localizacaoController.text = value;
+              //    print("Localização alterada para $value");
+              //  },
+              //),
+
+              //new buttons - animated
+
+              //!!!!!!!! Atention, test in android can be a problem !!!!!!!!
+
+              SizedBox(height: 20),
+
+              AnimatedButton(
+                  text: "Update Account",
+                  color: Colors.green,
+                  pressEvent: () {
+                    AwesomeDialog(
+                      context: context,
+                      dialogType: DialogType.success,
+                      animType: AnimType.topSlide,
+                      showCloseIcon: true,
+                      title: "Update Account",
+                      desc: "U sure whants update your account?",
+                      //Acts
+                      btnCancelOnPress: () {
+                        print("not green");
+                      },
+                      btnOkOnPress: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Account Updated")),
+                        );
+                        print("confirm green");
+                        if (idUsuario != null) {
+                          updateUser(idUsuario!).then((_) {
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    MeuPerfil(), // Removido o argumento `usuario`
+                              ),
+                            );
+                          });
+                        } else {
+                          print("Erro: idUsuario é nulo");
+                        }
+                      },
+                    ).show();
+                  }),
+
+              SizedBox(height: 100),
+
+              AnimatedButton(
+                  text: "Exclude Account",
+                  color: Colors.red,
+                  pressEvent: () {
+                    AwesomeDialog(
+                      context: context,
+                      dialogType: DialogType.warning,
+                      animType: AnimType.topSlide,
+                      showCloseIcon: true,
+                      title: "Exclude Account",
+                      desc: "U sure whants exclute your account?",
+                      //Acts
+                      btnCancelOnPress: () {
+                        print("idUsuario: $idUsuario");
+                        print("not red");
+                      },
+                      btnOkOnPress: () {
+                        print("confirm red");
+                        if (idUsuario != null) {
+                          print("Usuário a ser deletado: $idUsuario");
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("Account Deleted")),
                           );
-                        });
-                      } else {
-                        print("Erro: idUsuario é nulo");
-                      }
-                    },
-                    onDelete: () {
-                      if (idUsuario != null) {
-                        deleteUser(idUsuario!).then((_) {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (context) => Login()),
+                          deleteUser(idUsuario!).then((_) {
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(builder: (context) => Login()),
+                            );
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("Account Deleted")),
                           );
-                        });
-                      }
-                    },
-                  ),
-                ],
-              ),
+                        } else {
+                          print("Erro: idUsuario é nulo");
+                        }
+                      },
+                    ).show();
+                  }),
             ],
           ),
         ),
