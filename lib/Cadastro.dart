@@ -17,8 +17,7 @@ class _CadastroState extends State<Cadastro> {
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
-  final TextEditingController _confirmarSenhaController =
-      TextEditingController();
+  final TextEditingController _confirmarSenhaController = TextEditingController();
   void cadastrarUsuario() async {
     String nome = _nomeController.text;
     String email = _emailController.text;
@@ -92,6 +91,7 @@ class _CadastroState extends State<Cadastro> {
                 title: 'Nome',
                 label: 'Insira seu nome completo',
                 isPassword: false,
+                isEmail: false,
                 controller: _nomeController),
             const SizedBox(height: 20),
             // E-mail
@@ -99,6 +99,7 @@ class _CadastroState extends State<Cadastro> {
               title: 'E-mail',
               label: 'Insira seu melhor E-mail',
               isPassword: false,
+              isEmail: true,
               controller: _emailController,
             ),
 
@@ -108,6 +109,7 @@ class _CadastroState extends State<Cadastro> {
               title: 'Senha',
               label: 'Crie uma senha',
               isPassword: true,
+              isEmail: false,
               controller: _senhaController,
             ),
             const SizedBox(height: 20),
@@ -116,6 +118,7 @@ class _CadastroState extends State<Cadastro> {
               title: 'Confirmar Senha',
               label: 'Confirme sua senha',
               isPassword: true,
+              isEmail: false,
               controller: _confirmarSenhaController,
             ),
             const SizedBox(height: 20),

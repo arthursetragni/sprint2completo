@@ -134,6 +134,7 @@ class _LoginState extends State<Login> {
                 title: "E-mail",
                 label: 'Seu melhor E-mail',
                 isPassword: false,
+                isEmail: true,
                 controller: _emailControllerText,
               ),
               const SizedBox(height: 20),
@@ -143,6 +144,7 @@ class _LoginState extends State<Login> {
                 title: 'Senha',
                 label: 'Digite sua melhor senha',
                 isPassword: true,
+                isEmail: false,
                 controller: _senhaControllerText,
               ),
 

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class InputLogin extends StatelessWidget {
   final String title;
   final String label;
   final bool isPassword;
   final TextEditingController controller;
+  final bool isEmail;
 
   const InputLogin({
     super.key,
@@ -12,8 +14,8 @@ class InputLogin extends StatelessWidget {
     required this.label,
     required this.isPassword,
     required this.controller,
+    required this.isEmail,
   });
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -28,6 +30,13 @@ class InputLogin extends StatelessWidget {
           TextField(
             controller: controller,
             obscureText: isPassword,
+            inputFormatters: isEmail ?
+            [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'[a-zA-Z0-9@._]'),
+              ),
+            ]
+            :[],
             decoration: InputDecoration(
               border: const OutlineInputBorder(),
               labelText: label, // Label do campo

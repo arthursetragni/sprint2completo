@@ -45,7 +45,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
 
     if (usuario != null) {
       print("Valores recuperados");
-
+      print(usuario!.id);
       // Preenchendo os controladores com os valores do usuário
       setState(() {
         nomeController.text = usuario!.name; // Assume que o nome não é nulo
