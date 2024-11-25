@@ -1,0 +1,188 @@
+[33mcommit ec4cd7bba3a57b8faa1ec34f018b85768d92b39d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Merge: 5f98442 8b79bec
+Author: Rafael Vilela Padilha Clark <rafavpadilhaclark@gmail.com>
+Date:   Thu Nov 7 11:16:56 2024 -0300
+
+    Merge branch 'main' of https://github.com/arthursetragni/sprint2completo
+
+[33mcommit 5f98442fddccf3fd4673b626e5c47df33b623602[m
+Author: Rafael Vilela Padilha Clark <rafavpadilhaclark@gmail.com>
+Date:   Thu Nov 7 11:16:15 2024 -0300
+
+    Alterações mais recentes
+
+[33mcommit 8b79bec4de69aa7c9ab538b13c96d42ffb55df8d[m
+Author: RafaVPclark <rafaelvpclark@gmail.com>
+Date:   Wed Nov 6 17:24:04 2024 -0300
+
+    Alterações cadastro funcionando
+
+[33mcommit 9e16bbb4fbd66240a73f34646d3c2eaec4a83f65[m
+Author: Rafael Vilela Padilha Clark <rafavpadilhaclark@gmail.com>
+Date:   Tue Nov 5 11:08:43 2024 -0300
+
+    Versão final até o momento
+
+[33mcommit 123a3223d56a8a7afc32423e9662cde80df3a5cf[m
+Merge: 8266675 a6acadb
+Author: Rafael Vilela Padilha Clark <rafavpadilhaclark@gmail.com>
+Date:   Tue Nov 5 11:00:35 2024 -0300
+
+    Merge branch 'desenvolvimento'
+
+[33mcommit 8266675859861800d0e4e1b509d99f3ab7115f43[m
+Merge: 70742fc e5a9c64
+Author: Rafael Vilela Padilha Clark <rafavpadilhaclark@gmail.com>
+Date:   Tue Nov 5 10:46:56 2024 -0300
+
+    Merge branch 'rafael'
+
+[33mcommit e5a9c64910d0b290319d04b2726fc209ecc3f35c[m[33m ([m[1;31morigin/rafael[m[33m)[m
+Author: Rafael Vilela Padilha Clark <rafavpadilhaclark@gmail.com>
+Date:   Tue Nov 5 10:30:40 2024 -0300
+
+    Cadastro e login atualizados, tela de meu perfil recebe os dados do cadastro porém com alguns erros.
+
+[33mcommit 0925200d9e19a5b67da89f78b7fe3b89e05edf90[m
+Author: Rafael Vilela Padilha Clark <rafavpadilhaclark@gmail.com>
+Date:   Wed Oct 30 16:44:48 2024 -0300
+
+    Alterações funcionando
+
+[33mcommit a408a5d29e4e0adc855166b3e1f3c7c85e5b96e0[m
+Author: Rafael Vilela Padilha Clark <rafavpadilhaclark@gmail.com>
+Date:   Wed Oct 30 16:21:25 2024 -0300
+
+    Se pegar e gay e chamar arthur
+
+[33mcommit b0fb1af1c8f902da8497a3dcca3d7aebc1923904[m
+Author: Rafael Vilela Padilha Clark <rafavpadilhaclark@gmail.com>
+Date:   Wed Oct 30 16:16:52 2024 -0300
+
+    alterações atuais
+
+[33mcommit af7f36ddea49d443056988180342533b285b8296[m
+Author: Rafael Vilela Padilha Clark <rafavpadilhaclark@gmail.com>
+Date:   Wed Oct 30 16:05:40 2024 -0300
+
+    Não finalizado
+
+[33mcommit 89caa37e7f336b3eb0983a73d76c600dc3ea3919[m
+Author: Rafael Vilela Padilha Clark <rafavpadilhaclark@gmail.com>
+Date:   Wed Oct 30 11:34:38 2024 -0300
+
+    Implementação backend com frontend
+
+[33mcommit a6acadb68bd37acc1b860771bed3c4adc81b2eb2[m[33m ([m[1;31morigin/desenvolvimento[m[33m)[m
+Author: Livia Alves Ferreira <130468306+Livsna@users.noreply.github.com>
+Date:   Wed Oct 30 09:32:29 2024 -0300
+
+    Create TelaAvaliacao.dart
+
+[33mcommit 19f9e2302065129b729a7053065af72c8c7e3172[m
+Author: Livia Alves Ferreira <130468306+Livsna@users.noreply.github.com>
+Date:   Wed Oct 30 09:30:47 2024 -0300
+
+    Ao clicar no botão chama uma página agora
+
+[33mcommit 0a49ddce21cf26e1b970e94eedf800222419471f[m
+Author: Livia Alves Ferreira <130468306+Livsna@users.noreply.github.com>
+Date:   Wed Oct 30 09:29:30 2024 -0300
+
+    Create botao_cor_tamanho.dart
+    
+    botão que recebe label, ação e cor
+
+[33mcommit e13d2b893496fc2ea2cc6a4392d315a454a1a51d[m
+Author: Livia Alves Ferreira <130468306+Livsna@users.noreply.github.com>
+Date:   Wed Oct 30 09:28:11 2024 -0300
+
+    atualização do botão recebe icon para receber tamanho
+
+[33mcommit 5a77b55f614be54ea8f83384bfcd722a227a0990[m
+Author: Livia Alves Ferreira <130468306+Livsna@users.noreply.github.com>
+Date:   Mon Oct 28 09:59:16 2024 -0300
+
+    Atualização do título da página
+    
+    Tirei a cor de fundo laranja, em resumo deixei o título mais simples
+
+[33mcommit ca6086d674de40c19d47fc3529b4c356f65c1b11[m
+Author: Livia Alves Ferreira <130468306+Livsna@users.noreply.github.com>
+Date:   Thu Oct 17 15:18:45 2024 -0300
+
+    Create PaginaInicial.dart
+
+[33mcommit 29062be925e0a461d807f11b73f427d01ae0ea1d[m
+Author: Livia Alves Ferreira <130468306+Livsna@users.noreply.github.com>
+Date:   Thu Oct 17 15:17:12 2024 -0300
+
+    Update Main.dart
+
+[33mcommit 70742fc0193cb229b45691b4e16687da0b7b2c0e[m
+Merge: 0c1071c 6912c4f
+Author: Rafael Vilela Padilha Clark <rafavpadilhaclark@gmail.com>
+Date:   Wed Oct 16 23:10:17 2024 -0300
+
+    Versão final até o momento
+
+[33mcommit 0c1071c8eb8cf1a970f89b16902ea41449d09eb1[m
+Merge: 1336122 2984335
+Author: Livia Alves Ferreira <130468306+Livsna@users.noreply.github.com>
+Date:   Mon Oct 14 14:48:06 2024 -0300
+
+    Merge pull request #1 from arthursetragni/Livsna-patch-1
+    
+    Update MeusPedidos.dart
+
+[33mcommit 29843350d7ece377252068c7767c106e33cb6dbc[m[33m ([m[1;31morigin/Livsna-patch-1[m[33m)[m
+Author: Livia Alves Ferreira <130468306+Livsna@users.noreply.github.com>
+Date:   Mon Oct 14 14:47:42 2024 -0300
+
+    Update MeusPedidos.dart
+    
+    mexendo nas imagens e pegando da internet
+
+[33mcommit 1336122fe38b88e938b5b832c623f91fa5bcfc05[m
+Author: Livia Alves Ferreira <130468306+Livsna@users.noreply.github.com>
+Date:   Mon Oct 14 14:45:32 2024 -0300
+
+    Add files via upload
+    
+    botão que recebe um ícone e a cor dele, estou usando nos pedidos
+
+[33mcommit 6912c4fa5d20f3d91c43d8facd8633aecb47f57e[m[33m ([m[1;31morigin/Rafael[m[33m)[m
+Author: Rafael Vilela Padilha Clark <rafavpadilhaclark@gmail.com>
+Date:   Sun Oct 13 15:34:55 2024 -0300
+
+    Alterações barra de navegação
+
+[33mcommit c0cad9e49a9bbca9610b897f652bd2d85a4b84c3[m
+Author: arthursetragni <arthursetragni@gmail.com>
+Date:   Wed Oct 9 18:33:31 2024 -0300
+
+    Metodo pra salvar no celular do usuario
+
+[33mcommit 39450e05d1162755106852f6dd1c1c0724c4b07b[m
+Author: arthursetragni <arthursetragni@gmail.com>
+Date:   Wed Oct 9 17:36:11 2024 -0300
+
+    Adicionando dependencia de compartilihar dados
+
+[33mcommit 9117cffed9f10a252b9a8a0e63530dd7477a55eb[m
+Author: arthursetragni <arthursetragni@gmail.com>
+Date:   Tue Oct 8 14:19:02 2024 -0300
+
+    DetalheServico dinamico
+
+[33mcommit 90ae2d875a0501dab99eeaca7b57cf024296650b[m
+Author: arthursetragni <arthursetragni@gmail.com>
+Date:   Tue Oct 8 14:05:49 2024 -0300
+
+    Home dinaminca
+
+[33mcommit 89e5c135c1e56627291231e31b5510fcbdc94cf3[m
+Author: arthursetragni <arthursetragni@gmail.com>
+Date:   Wed Oct 2 18:20:26 2024 -0300
+
+    Commit inicial
