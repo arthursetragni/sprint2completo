@@ -58,7 +58,6 @@ class _MeuPerfilState extends State<MeuPerfil> {
             DateTime.tryParse(prefs.getString('dataNascimento') ?? '');
         genero = prefs.getString('genero') ?? '';
         idUsuario = prefs.getString('id');
-        print("idUsuario Aqui em cima: $idUsuario");
       });
     }
   }
