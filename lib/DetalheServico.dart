@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:http/http.dart' as http;
+
 
 class DetalheServivo extends StatefulWidget {
   const DetalheServivo({super.key});
@@ -15,29 +17,43 @@ class _DetalheServivoState extends State<DetalheServivo> {
   Map<String, dynamic>? job; // Modificado para um Map para trabalhar com chaves como 'titulo'
   
   @override
-  void initState() {
-    super.initState();
-    _loadJobs().then((data) {
-      setState(() {
-        jobs = data;
-      });
-    });
-  }
+  // void initState() {
+  //   super.initState();
+  //   _loadJobs().then((data) {
+  //     setState(() {
+  //       jobs = data;
+  //     });
+  //   });
+  // }
 
-  Future<List<dynamic>> _loadJobs() async {
-    String jsonString = await rootBundle.loadString('assets/json/jobs.json');
-    List<dynamic> jobs = json.decode(jsonString);
-    return jobs;
+  Future<List<dynamic>> _loadJobs(String trabalhoId) async {
+    try {
+      final response = await http.get(Uri.parse(ApiServices.endpoint("/servico/$trabalhoId")));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        // print(data);
+        // print(response.body);
+        // print(data['servicos']);
+
+        return data['servicos'];
+      } else {
+        throw Exception('Erro ao carregar os serviços. Código: ${response.statusCode}');
+      }
+    } catch (e) {
+      print("Erro: $e");
+      throw Exception('Erro ao carregar os serviços.');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final int trabalhoId = ModalRoute.of(context)!.settings.arguments as int;
+    final String trabalhoId = ModalRoute.of(context)!.settings.arguments as String;
 
     // Verifica se os trabalhos já foram carregados e busca o trabalho correto
     if (jobs.isNotEmpty) {
       for (int i = 0; i < jobs.length; i++) {
-        if (jobs[i]['id'] == trabalhoId) {
+        if (jobs[i]['_id'] == trabalhoId) {
           job = jobs[i];
           break;
         }
@@ -127,7 +143,7 @@ class _DetalheServivoState extends State<DetalheServivo> {
                         Container(
                           margin: const EdgeInsets.only(bottom: 68, left: 53),
                           child: Text(
-                            "R\$ ${job!['preco']}", // Exibe o preço do trabalho
+                            "R\$ ${job!['preco_acordado']}", // Exibe o preço do trabalho
                             style: const TextStyle(
                               color: Color(0xFF27AE60),
                               fontSize: 15,
@@ -197,5 +213,15 @@ class _DetalheServivoState extends State<DetalheServivo> {
         ],
       ),
     );
+  }
+}
+
+class ApiServices {
+  // URL base da API, definida como constante
+  static const String baseUrl = "http://localhost:3000";
+
+  // Método para gerar a URL de rotas específicas
+  static String endpoint(String path) {
+    return "$baseUrl$path";
   }
 }

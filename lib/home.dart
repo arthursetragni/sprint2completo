@@ -1,7 +1,10 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 import 'widgets/barra_nav.dart';
+import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -13,8 +16,33 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int currentPageIndex = 0;
 
+  //String url = "http://localhost:3000";
+
+
+   Future<List<dynamic>> _loadJobs() async {
+    try {
+      final response = await http.get(Uri.parse(ApiServices.endpoint("/servico")));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        // print(data);
+        // print(response.body);
+        // print(data['servicos']);
+
+        return data['servicos'];
+      } else {
+        throw Exception('Erro ao carregar os serviços. Código: ${response.statusCode}');
+      }
+    } catch (e) {
+      print("Erro: $e");
+      throw Exception('Erro ao carregar os serviços.');
+    }
+  }
+
+  List<dynamic> jobs = [];
+
   @override
-  Widget build(BuildContext context) {
+  Widget  build(BuildContext context) {
     return Scaffold(
       body: Container(
         constraints: const BoxConstraints.expand(),
@@ -122,15 +150,17 @@ class _HomeState extends State<Home> {
                         child: PageView(
                           controller: PageController(viewportFraction: 0.5),
                           children: jobs.map((job) {
+                            print(job);
                             return GestureDetector(
                               onTap: () {
                                 Navigator.pushNamed(context, "/Detalhe",
-                                    arguments: job['id']);
+                                    arguments: job['_id']);
                               },
+                              
                               child: _buildCard(
                                 job['titulo'],
-                                "R\$ ${job['preco']}",
-                                job['imagem'],
+                                "R\$ ${job['preco_acordado']}",
+                                job['categoria'],
                               ),
                             );
                           }).toList(),
@@ -149,7 +179,13 @@ class _HomeState extends State<Home> {
   }
 
   // Método auxiliar para construir os cards
-  Widget _buildCard(String title, String price, String imagePath) {
+  Widget _buildCard(String title, String price, int categoria) {
+    String imagePath = "";
+    if(categoria == 1) imagePath = "assets/home/pintor.png";
+    if(categoria == 2) imagePath = "assets/home/empregada.jpg";
+    if(categoria == 3) imagePath = "assets/home/eletricista.png";
+    if(categoria == 4) imagePath = "assets/home/encanador.png";
+
     return Column(
       children: [
         Container(
@@ -192,13 +228,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Future<List<dynamic>> _loadJobs() async {
-    String jsonString = await rootBundle.loadString('assets/json/jobs.json');
-    List<dynamic> jobs = json.decode(jsonString);
-    return jobs;
-  }
-
-  List<dynamic> jobs = [];
+ 
 
   @override
   void initState() {
@@ -207,6 +237,18 @@ class _HomeState extends State<Home> {
       setState(() {
         jobs = data;
       });
+      //print(jobs);
     });
+  }
+}
+
+
+class ApiServices {
+  // URL base da API, definida como constante
+  static const String baseUrl = "http://localhost:3000";
+
+  // Método para gerar a URL de rotas específicas
+  static String endpoint(String path) {
+    return "$baseUrl$path";
   }
 }
