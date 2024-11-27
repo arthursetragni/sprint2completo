@@ -39,7 +39,10 @@ class _MeuPerfilState extends State<MeuPerfil> {
   final editEmailController = TextEditingController();
   final editTelefoneController = TextEditingController();
   final editLocalizacaoController = TextEditingController();
-
+  // Controladores para os campos de CEP
+  final logradouroController = TextEditingController();
+  final bairroController = TextEditingController();
+  final localidadeController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -87,14 +90,29 @@ class _MeuPerfilState extends State<MeuPerfil> {
     await prefs.setString('id', user.id);
   }
 
-  void recuperarCep() async{
+  void recuperarCep() async {
     print("Entrou no método");
-    // String cep = localizacaoController.text;
-    String cep = "30421345";
-    print(cep);
+    String cep = editLocalizacaoController.text;
+     try {
     final response = await apiCepService.recuperarCep(cep);
-    print(response);
+    
+    if (response != null) {
+      print(response);
+      setState(() {
+        editLocalizacaoController.text = response['cep'] ?? '';
+        logradouroController.text = response['logradouro'] ?? '';
+        bairroController.text = response['bairro'] ?? '';
+        localidadeController.text = response['localidade'] ?? '';
+      });
+      print("CEP atualizado com sucesso");
+    } else {
+      print("CEP não encontrado");
+    }
+  } catch (e) {
+    print("Erro ao recuperar CEP: $e");
   }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -211,33 +229,64 @@ class _MeuPerfilState extends State<MeuPerfil> {
               const SizedBox(height: 20),
               // Essa parte é pra separar a parte das info pessoais com o CEP - Atenção guilherme não precisa colocar const antes. Aceite as cores azuis
               Row(children: <Widget>[
-              Expanded(
-                child: new Container(
-                    margin: const EdgeInsets.only(left: 10.0, right: 20.0),
-                    child: Divider(
-                      color: Colors.black,
-                      height: 36,
-                    )),
-              ),
-              Text("Localização"),
-              Expanded(
-                child: new Container(
-                    margin: const EdgeInsets.only(left: 20.0, right: 10.0),
-                    child: Divider(
-                      color: Colors.black,
-                      height: 36,
-                    )),
-              ),
-            ]),
+                Expanded(
+                  child: new Container(
+                      margin: const EdgeInsets.only(left: 10.0, right: 20.0),
+                      child: Divider(
+                        color: Colors.black,
+                        height: 36,
+                      )),
+                ),
+                Text("Localização"),
+                Expanded(
+                  child: new Container(
+                      margin: const EdgeInsets.only(left: 20.0, right: 10.0),
+                      child: Divider(
+                        color: Colors.black,
+                        height: 36,
+                      )),
+                ),
+              ]),
               const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: NewEditable(
+                      LabelText: "CEP",
+                      controller: editLocalizacaoController,
+                      placeholder: localizacaoController.text,
+                      isPass: false,
+                    ),
+                  ),
+                  const SizedBox(width: 10), // Espaço entre o input e o botão
+                  SizedBox(
+                    width: 150, // Defina uma largura fixa para o botão
+                    child: IconButton(onPressed: recuperarCep, icon: const Icon(Icons.search),tooltip: "Pesquisar CEP",),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              // Campos de endereço
               NewEditable(
-                LabelText: "CEP",
-                controller: editLocalizacaoController,
-                placeholder: localizacaoController.text,
+                LabelText: "Logradouro",
+                controller: logradouroController,
+                placeholder: "Rua/Avenida",
                 isPass: false,
               ),
-              BlockButton(icon: Icons.zoom_in, label: "Pesquisar CEP", onPressed: recuperarCep),
-
+              const SizedBox(height: 20),
+              NewEditable(
+                LabelText: "Bairro",
+                controller: bairroController,
+                placeholder: "Bairro",
+                isPass: false,
+              ),
+              const SizedBox(height: 20),
+              NewEditable(
+                LabelText: "Localidade",
+                controller: localidadeController,
+                placeholder: "Cidade",
+                isPass: false,
+              ),
               //old editable
               //EditableField(
               //  title: 'Localização',
