@@ -150,7 +150,6 @@ class _HomeState extends State<Home> {
                         child: PageView(
                           controller: PageController(viewportFraction: 0.5),
                           children: jobs.map((job) {
-                            print(job);
                             return GestureDetector(
                               onTap: () {
                                 Navigator.pushNamed(context, "/Detalhe",

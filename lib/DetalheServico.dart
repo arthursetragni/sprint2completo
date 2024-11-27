@@ -27,28 +27,41 @@ class _DetalheServivoState extends State<DetalheServivo> {
   // }
 
   Future<List<dynamic>> _loadJobs(String trabalhoId) async {
-    try {
-      final response = await http.get(Uri.parse(ApiServices.endpoint("/servico/$trabalhoId")));
+  print(trabalhoId);
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        // print(data);
-        // print(response.body);
-        // print(data['servicos']);
+  try {
+    final response = await http.get(Uri.parse(ApiServices.endpoint("/servico/$trabalhoId")));
 
-        return data['servicos'];
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      if (data['servico'] != null) {
+        // Retorna o serviço dentro de uma lista
+        return [data['servico']];
       } else {
-        throw Exception('Erro ao carregar os serviços. Código: ${response.statusCode}');
+        throw Exception('Serviço não encontrado no backend.');
       }
-    } catch (e) {
-      print("Erro: $e");
-      throw Exception('Erro ao carregar os serviços.');
+    } else {
+      throw Exception('Erro ao carregar os serviços. Código: ${response.statusCode}');
     }
+  } catch (e) {
+    print("Erro: $e");
+    throw Exception('Erro ao carregar os serviços.');
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
     final String trabalhoId = ModalRoute.of(context)!.settings.arguments as String;
+
+    print(trabalhoId);
+
+     _loadJobs(trabalhoId).then((data) {
+      setState(() {
+        jobs = data;
+      });
+    });
 
     // Verifica se os trabalhos já foram carregados e busca o trabalho correto
     if (jobs.isNotEmpty) {
