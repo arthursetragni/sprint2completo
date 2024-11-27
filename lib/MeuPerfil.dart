@@ -122,14 +122,22 @@ class _MeuPerfilState extends State<MeuPerfil> {
                 children: [
                   Stack(
                     children: [
-                      const CircleAvatar(radius: 40),
+                      const CircleAvatar(
+                        radius: 40,
+                        backgroundImage: AssetImage('assets/icons/user.png'),
+                      ),
                       Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Icon(
-                          Icons.edit,
-                          size: 20,
-                          color: Colors.grey[700],
+                        bottom: -12,
+                        right: -17,
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.edit,
+                            size: 20,
+                            color: const Color.fromARGB(255, 41, 41, 41),
+                          ),
+                          onPressed: () {
+                            print("tu clicou na foto, parabéns");
+                          },
                         ),
                       ),
                     ],
@@ -393,14 +401,14 @@ class _MeuPerfilState extends State<MeuPerfil> {
           SnackBar(content: Text("Account Updated")),
         );
 
-/* TESTE UPDATE USER
+/* TESTE UPDATE USER */
         //atualizar o update
-        nomeController.text = editNomeController.text;
-        emailController.text = editEmailController.text;
-        telefoneController.text = editTelefoneController.text;
-        localizacaoController.text = editLocalizacaoController.text;
+        //nomeController.text = editNomeController.text;
+        //emailController.text = editEmailController.text;
+        //telefoneController.text = editTelefoneController.text;
+        //localizacaoController.text = editLocalizacaoController.text;
         //dataNascimento = editDataNascimento;
-        dataNascimentoController.text = editDataNascimentoController.text;
+        //dataNascimentoController.text = editDataNascimentoController.text;
         //genero = editGenero.text;
 
         User usuarioAtualizado = User(
@@ -416,7 +424,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
         await _saveUserData(usuarioAtualizado);
         setState(() {
           idUsuario = usuarioAtualizado.id;
-        });*/
+        });
       } else {
         print('Falha ao atualizar usuário: ${response.statusCode}');
         if (response.statusCode == 400) {
