@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart'; // Para salvar dado
 import 'models/User.dart'; // Modelo de usuário
 import 'package:awesome_dialog/awesome_dialog.dart'; // Para caixas de diálogo pop up
 import 'widgets/text_editable.dart';
+import 'package:intl/intl.dart';
 //import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 //import 'widgets/input_login.dart'; //campo de texto para teste TESTE
 
@@ -25,7 +26,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
   final telefoneController = TextEditingController();
   final localizacaoController = TextEditingController();
   final dataNascimentoController = TextEditingController();
-  //DateTime? dataNascimento; old data
+  //DateTime? dataNascimento;
   String? genero;
   String? idUsuario;
   String rotaBackEnd = 'https://backend-lddm.vercel.app';
@@ -70,8 +71,24 @@ class _MeuPerfilState extends State<MeuPerfil> {
         localizacaoController.text = usuario!.adress ??
             'XXXXX-XXX'; //prefs.getString('localizacao') ?? '';
         //OLD DATA //dataNascimento = DateTime.tryParse(usuario!.date_of_birth as String? ?? '');
-        dataNascimentoController.text =
-            usuario!.date_of_birth as String? ?? 'DD/MM/AAAA';
+        try {
+          // Parse a string ISO 8601 para DateTime
+          DateTime dateTime =
+              DateTime.parse(usuario!.date_of_birth!.toIso8601String());
+
+          // Formatar DateTime para string no formato dd/MM/yyyy
+          String formattedDate = DateFormat('dd/MM/yyyy').format(dateTime);
+
+          print(formattedDate); // Saída: 01/02/2001
+        } catch (e) {
+          print("Erro ao formatar a data: $e");
+        }
+
+        DateFormat formatter = DateFormat('dd/MM/yyyy');
+        if (usuario!.date_of_birth != null) {
+          dataNascimentoController.text = formatter.format(usuario!
+              .date_of_birth!); // usuario!.date_of_birth as String? ?? 'DD/MM/AAAA';
+        }
         genero = usuario?.gender; //prefs.getString('genero') ?? '';
         idUsuario = usuario!.id;
       });
@@ -377,11 +394,90 @@ class _MeuPerfilState extends State<MeuPerfil> {
 
   Future<void> updateUser(String id) async {
     final url = Uri.parse('$rotaBackEnd/user/update/$id');
+    DateFormat format = DateFormat('dd/MM/yyyy');
+    DateTime parsedDate;
+
+    try {
+      parsedDate = format.parse(editDataNascimentoController.text);
+    } catch (e) {
+      print("Erro ao converter data: $e");
+      parsedDate = DateTime.now(); // Define uma data padrão em caso de erro
+    }
+
+    // Convertendo a data para string antes de enviá-la
+    final data = {
+      'name': editNomeController.text,
+      'email': editEmailController.text,
+      'date_of_birth':
+          parsedDate.toIso8601String(), // Convertendo para ISO 8601
+      'genero': genero,
+      'telephone': editTelefoneController.text,
+      'adress': editLocalizacaoController.text,
+    };
+
+    print('Dados enviados para o backend: $data');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(data),
+      );
+
+      if (response.statusCode == 200) {
+        print('Usuário atualizado com sucesso :)');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Conta atualizada com sucesso!")),
+        );
+
+        // Atualizando localmente
+        User usuarioAtualizado = User(
+          email: editEmailController.text,
+          name: editNomeController.text,
+          date_of_birth: parsedDate,
+          gender: genero,
+          telephone: editTelefoneController.text,
+          adress: editLocalizacaoController.text,
+          id: idUsuario!,
+        );
+        await _saveUserData(usuarioAtualizado);
+        setState(() {
+          idUsuario = usuarioAtualizado.id;
+        });
+      } else {
+        print('Falha ao atualizar usuário: ${response.statusCode}');
+        if (response.statusCode == 404) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Usuário não encontrado")),
+          );
+        } else if (response.statusCode == 500) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(
+                    "Erro ao atualizar usuário, tente novamente mais tarde")),
+          );
+        }
+      }
+    } catch (error) {
+      print('Erro na conexão: $error');
+    }
+  }
+
+  //Future old
+  /*Future<void> updateUser(String id) async {
+    final url = Uri.parse('$rotaBackEnd/user/update/$id');
+    DateFormat format = DateFormat('dd/MM/yyyy');
+    DateTime parsedDate = DateTime.now();
+    try {
+      parsedDate = format.parse(editDataNascimentoController.text);
+      print(parsedDate);
+    } catch (e) {
+      print("Erro ao converter data: $e");
+    }
     final data = {
       'name': editNomeController.text,
       'email': editEmailController.text, //editEmailController.text,
-      'date_of_birth': editDataNascimentoController
-          .text, //dataNascimento?.toIso8601String(),
+      'date_of_birth': parsedDate, //dataNascimento?.toIso8601String(),
       'genero': genero,
       'telephone': editTelefoneController.text,
       'adress': editLocalizacaoController.text,
@@ -427,7 +523,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
         });
       } else {
         print('Falha ao atualizar usuário: ${response.statusCode}');
-        if (response.statusCode == 400) {
+        if (response.statusCode == 404) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Usu´rio não encontrado")),
           );
@@ -442,7 +538,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
     } catch (error) {
       print('Erro na conexão: $error');
     }
-  }
+  }*/
 
   Future<void> deleteUser(String id) async {
     final url = Uri.parse('$rotaBackEnd/user/$id');
