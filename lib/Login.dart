@@ -94,6 +94,10 @@ class _LoginState extends State<Login> {
           SnackBar(content: Text(errorMessage)),
         );
       }
+    }else{
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Erro ao realizar Login. Tente novamente mais tarde")),
+        );
     }
   }
 

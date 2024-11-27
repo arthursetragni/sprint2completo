@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:login/Login.dart';
+import 'package:login/services/api_cep_service.dart';
+import 'package:login/widgets/block_button.dart';
 import 'widgets/barra_nav.dart'; //barra de navegação
 //import 'widgets/editable_field.dart'; //campo de texto
 import 'widgets/editable_datafield.dart'; //campo de data
@@ -22,6 +24,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
   final emailController = TextEditingController();
   final telefoneController = TextEditingController();
   final localizacaoController = TextEditingController();
+  final apiCepService = ApiCepService("https://opencep.com/v1/");
   DateTime? dataNascimento;
   String genero = 'Masculino';
   String? idUsuario;
@@ -74,6 +77,14 @@ class _MeuPerfilState extends State<MeuPerfil> {
     await prefs.setString('id', user.id);
   }
 
+  void recuperarCep() async{
+    print("Entrou no método");
+    // String cep = localizacaoController.text;
+    String cep = "30421345";
+    print(cep);
+    final response = await apiCepService.recuperarCep(cep);
+    print(response);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -175,11 +186,33 @@ class _MeuPerfilState extends State<MeuPerfil> {
                 isPass: false,
               ),
               const SizedBox(height: 20),
+              // Essa parte é pra separar a parte das info pessoais com o CEP - Atenção guilherme não precisa colocar const antes. Aceite as cores azuis
+              Row(children: <Widget>[
+              Expanded(
+                child: new Container(
+                    margin: const EdgeInsets.only(left: 10.0, right: 20.0),
+                    child: Divider(
+                      color: Colors.black,
+                      height: 36,
+                    )),
+              ),
+              Text("Localização"),
+              Expanded(
+                child: new Container(
+                    margin: const EdgeInsets.only(left: 20.0, right: 10.0),
+                    child: Divider(
+                      color: Colors.black,
+                      height: 36,
+                    )),
+              ),
+            ]),
+              const SizedBox(height: 20),
               NewEditable(
-                LabelText: "Localização",
+                LabelText: "CEP",
                 placeholder: localizacaoController.text,
                 isPass: false,
               ),
+              BlockButton(icon: Icons.zoom_in, label: "Pesquisar CEP", onPressed: recuperarCep),
 
               //old editable
               //EditableField(
