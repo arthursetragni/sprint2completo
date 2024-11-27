@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart'; // Para salvar dado
 import 'models/User.dart'; // Modelo de usuário
 import 'package:awesome_dialog/awesome_dialog.dart'; // Para caixas de diálogo pop up
 import 'widgets/text_editable.dart';
+//import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 //import 'widgets/input_login.dart'; //campo de texto para teste TESTE
 
 class MeuPerfil extends StatefulWidget {
@@ -26,14 +27,16 @@ class _MeuPerfilState extends State<MeuPerfil> {
   final telefoneController = TextEditingController();
   final localizacaoController = TextEditingController();
   final apiCepService = ApiCepService("https://opencep.com/v1/");
-  DateTime? dataNascimento;
+  final dataNascimentoController = TextEditingController();
+  //DateTime? dataNascimento; old data
   String? genero;
   String? idUsuario;
   String rotaBackEnd = 'https://backend-lddm.vercel.app';
 
   //adicionar controller nos inputs de texto !!!!!!!!!!!!!!!!!!!!!!!!!
 
-  DateTime? editDataNascimento;
+  //DateTime? editDataNascimento;
+  final editDataNascimentoController = TextEditingController();
   final editNomeController = TextEditingController();
   final editGenero = TextEditingController();
   final editEmailController = TextEditingController();
@@ -68,11 +71,14 @@ class _MeuPerfilState extends State<MeuPerfil> {
       setState(() {
         nomeController.text = usuario!.name; // Assume que o nome não é nulo
         emailController.text = usuario!.email; // Assume que o email não é nulo
-        telefoneController.text = prefs.getString('telefone') ?? '';
-        localizacaoController.text = prefs.getString('localizacao') ?? '';
-        dataNascimento =
-            DateTime.tryParse(prefs.getString('dataNascimento') ?? '');
-        genero = prefs.getString('genero') ?? '';
+        telefoneController.text = usuario!.telephone ??
+            '(XX) XXXX-XXXX'; //prefs.getString('telefone') ?? '';
+        localizacaoController.text = usuario!.adress ??
+            'XXXXX-XXX'; //prefs.getString('localizacao') ?? '';
+        //OLD DATA //dataNascimento = DateTime.tryParse(usuario!.date_of_birth as String? ?? '');
+        dataNascimentoController.text =
+            usuario!.date_of_birth as String? ?? 'DD/MM/AAAA';
+        genero = usuario?.gender; //prefs.getString('genero') ?? '';
         idUsuario = usuario!.id;
       });
     }
@@ -82,10 +88,12 @@ class _MeuPerfilState extends State<MeuPerfil> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('name', user.name);
     await prefs.setString('email', user.email);
-    await prefs.setString('telefone', telefoneController.text);
-    await prefs.setString('localizacao', localizacaoController.text);
+    await prefs.setString('telephone', telefoneController.text);
+    await prefs.setString('adress', localizacaoController.text);
     await prefs.setString(
-        'dataNascimento', dataNascimento?.toIso8601String() ?? '');
+        'date_of_birth',
+        dataNascimentoController
+            .text); //dataNascimento?.toIso8601String() ?? '');
     await prefs.setString('genero', genero ?? '');
     await prefs.setString('id', user.id);
   }
@@ -190,6 +198,8 @@ class _MeuPerfilState extends State<MeuPerfil> {
                 controller: editNomeController,
                 placeholder: nomeController.text,
                 isPass: false,
+                isDate: false,
+                isCell: false,
                 //returnController: editNomeController,
               ),
               const SizedBox(height: 20),
@@ -199,17 +209,30 @@ class _MeuPerfilState extends State<MeuPerfil> {
                 controller: editEmailController,
                 placeholder: emailController.text,
                 isPass: false,
+                isDate: false,
+                isCell: false,
               ),
               const SizedBox(height: 20),
-              EditableDateField(
-                //data de nascimento editable
-                title: 'Data de Nascimento',
-                initialDate: dataNascimento ?? DateTime(2000, 1, 1),
-                onSave: (value) {
-                  dataNascimento = value;
-                  print("Data de nascimento alterada para $value");
-                },
+              NewEditable(
+                LabelText: "Data de Nascimento",
+                controller: editDataNascimentoController,
+                placeholder: dataNascimentoController.text,
+                isPass: false,
+                isDate: true,
+                isCell: false,
               ),
+
+              //old editable Date
+              //EditableDateField(
+              //  //data de nascimento editable
+              //  title: 'Data de Nascimento',
+              //  initialDate: dataNascimento ?? DateTime(2000, 1, 1),
+              //  onSave: (value) {
+              //    dataNascimento = value;
+              //    print("Data de nascimento alterada para $value");
+              //  },
+              //),
+
               EditableGenderField(
                 //gênero editable
                 title: 'Gênero',
@@ -225,8 +248,11 @@ class _MeuPerfilState extends State<MeuPerfil> {
                 controller: editTelefoneController,
                 placeholder: telefoneController.text,
                 isPass: false,
+                isDate: false,
+                isCell: true,
               ),
               const SizedBox(height: 20),
+            
               // Essa parte é pra separar a parte das info pessoais com o CEP - Atenção guilherme não precisa colocar const antes. Aceite as cores azuis
               Row(children: <Widget>[
                 Expanded(
@@ -256,6 +282,8 @@ class _MeuPerfilState extends State<MeuPerfil> {
                       controller: editLocalizacaoController,
                       placeholder: localizacaoController.text,
                       isPass: false,
+                      isDate: false,
+                      isCell: false,
                     ),
                   ),
                   const SizedBox(width: 10), // Espaço entre o input e o botão
@@ -272,6 +300,8 @@ class _MeuPerfilState extends State<MeuPerfil> {
                 controller: logradouroController,
                 placeholder: "Rua/Avenida",
                 isPass: false,
+                isDate: false,
+                isCell: false,
               ),
               const SizedBox(height: 20),
               NewEditable(
@@ -279,13 +309,18 @@ class _MeuPerfilState extends State<MeuPerfil> {
                 controller: bairroController,
                 placeholder: "Bairro",
                 isPass: false,
+                isDate: false,
+                isCell: false,
               ),
+              
               const SizedBox(height: 20),
               NewEditable(
                 LabelText: "Localidade",
                 controller: localidadeController,
                 placeholder: "Cidade",
                 isPass: false,
+                isDate: false,
+                isCell: false,
               ),
               //old editable
               //EditableField(
@@ -302,9 +337,10 @@ class _MeuPerfilState extends State<MeuPerfil> {
               //!!!!!!!! Atention, test in android can be a problem !!!!!!!!
 
               SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               AnimatedButton(
-                  text: "Atualizar Conta",
+                  text: "Confirmar",
                   color: Colors.green,
                   pressEvent: () {
                     AwesomeDialog(
@@ -323,12 +359,12 @@ class _MeuPerfilState extends State<MeuPerfil> {
                         print("confirm green");
                         if (idUsuario != null) {
                           updateUser(idUsuario!).then((_) {
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    MeuPerfil(), // Removido o argumento `usuario`
-                              ),
-                            );
+                            //Navigator.of(context).pushReplacement(
+                            //  MaterialPageRoute(
+                            //    builder: (context) =>
+                            //        MeuPerfil(), // Removido o argumento `usuario`
+                            //  ),
+                            //);
                           });
                         } else {
                           print("Erro: idUsuario é nulo");
@@ -337,17 +373,35 @@ class _MeuPerfilState extends State<MeuPerfil> {
                     ).show();
                   }),
 
-              SizedBox(height: 100),
+              SizedBox(height: 30),
+              Center(
+                  child: Text(
+                "Versão 1.3",
+                style: TextStyle(
+                  fontSize: 18, // Ajuste o tamanho da fonte conforme necessário
+                  color: Colors.grey.shade600, // Cinza claro
+                  fontWeight: FontWeight.w400, // Peso leve para o texto
+                ),
+              )),
+
+              SizedBox(height: 30),
 
               AnimatedButton(
                   text: "Excluir Conta",
-                  color: Colors.red,
+                  buttonTextStyle: const TextStyle(
+                    //fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red,
+                  ),
+                  color: const Color.fromARGB(255, 236, 236, 236),
                   pressEvent: () {
                     AwesomeDialog(
                       context: context,
                       dialogType: DialogType.warning,
                       animType: AnimType.topSlide,
                       showCloseIcon: true,
+                      titleTextStyle: const TextStyle(
+                          color: Colors.red, fontWeight: FontWeight.bold),
                       title: "Excluir Conta",
                       desc: "Tem certeza que deseja excluir sua conta?",
                       //Acts
@@ -398,8 +452,8 @@ class _MeuPerfilState extends State<MeuPerfil> {
     if (editLocalizacaoController.text == '') {
       editLocalizacaoController.text = localizacaoController.text;
     }
-    if (editDataNascimento == null) {
-      editDataNascimento = dataNascimento;
+    if (editDataNascimentoController == '') {
+      editDataNascimentoController.text = dataNascimentoController.text;
     }
   }
 
@@ -408,7 +462,8 @@ class _MeuPerfilState extends State<MeuPerfil> {
     final data = {
       'name': editNomeController.text,
       'email': editEmailController.text, //editEmailController.text,
-      'date_of_birth': dataNascimento?.toIso8601String(),
+      'date_of_birth': editDataNascimentoController
+          .text, //dataNascimento?.toIso8601String(),
       'genero': genero,
       'telephone': editTelefoneController.text,
       'adress': editLocalizacaoController.text,
@@ -428,20 +483,21 @@ class _MeuPerfilState extends State<MeuPerfil> {
           SnackBar(content: Text("Account Updated")),
         );
 
+/* TESTE UPDATE USER
         //atualizar o update
         nomeController.text = editNomeController.text;
         emailController.text = editEmailController.text;
         telefoneController.text = editTelefoneController.text;
         localizacaoController.text = editLocalizacaoController.text;
-        dataNascimento = editDataNascimento;
+        //dataNascimento = editDataNascimento;
+        dataNascimentoController.text = editDataNascimentoController.text;
         //genero = editGenero.text;
 
         User usuarioAtualizado = User(
-          //PRA QUE ISSO?
           email: editEmailController.text,
           name: editNomeController.text,
-          //email: editEmailController.text,
-          date_of_birth: dataNascimento,
+          date_of_birth: DateTime.tryParse(
+              editDataNascimentoController.text), //dataNascimento,
           gender: genero,
           telephone: editTelefoneController.text,
           adress: editLocalizacaoController.text,
@@ -450,9 +506,20 @@ class _MeuPerfilState extends State<MeuPerfil> {
         await _saveUserData(usuarioAtualizado);
         setState(() {
           idUsuario = usuarioAtualizado.id;
-        });
+        });*/
       } else {
         print('Falha ao atualizar usuário: ${response.statusCode}');
+        if (response.statusCode == 400) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Usu´rio não encontrado")),
+          );
+        } else if (response.statusCode == 500) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(
+                    "Erro ao atualizar usuário, tente novamente mais tarde")),
+          );
+        }
       }
     } catch (error) {
       print('Erro na conexão: $error');
