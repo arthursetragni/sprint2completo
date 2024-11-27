@@ -7,8 +7,25 @@ import 'BarraNavegacao.dart';
 import 'Login.dart';
 import 'home.dart';
 import 'PaginaInicial.dart';
+import 'post_job.dart';
 
-void main() => runApp(const MyApp());
+import 'dart:io';
+import 'package:http/http.dart' as http;
+
+// Ignorar a validação do certificado
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (cert, host, port) => true;
+  }
+}
+
+void main() {
+  HttpOverrides.global =
+      MyHttpOverrides(); // Ignorar a validação do certificado
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -32,6 +49,7 @@ class MyApp extends StatelessWidget {
         '/meusPedidos': (context) => MeusPedidosPage(),
         '/meuPerfil': (context) => MeuPerfil(),
         '/paginaInicial': (context) => PaginaInicial(),
+        '/postJob': (context) => PostJob(),
       },
     );
   }

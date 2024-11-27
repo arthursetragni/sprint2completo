@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:login/TelaAvaliacao.dart';
-import 'package:login/widgets/barra_nav.dart';
 import 'widgets/barra_nav.dart';
 import 'widgets/botao_recebe_icon.dart';
 

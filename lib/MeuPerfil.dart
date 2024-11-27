@@ -101,24 +101,24 @@ class _MeuPerfilState extends State<MeuPerfil> {
   void recuperarCep() async {
     print("Entrou no método");
     String cep = editLocalizacaoController.text;
-     try {
-    final response = await apiCepService.recuperarCep(cep);
-    
-    if (response != null) {
-      print(response);
-      setState(() {
-        editLocalizacaoController.text = response['cep'] ?? '';
-        logradouroController.text = response['logradouro'] ?? '';
-        bairroController.text = response['bairro'] ?? '';
-        localidadeController.text = response['localidade'] ?? '';
-      });
-      print("CEP atualizado com sucesso");
-    } else {
-      print("CEP não encontrado");
+    try {
+      final response = await apiCepService.recuperarCep(cep);
+
+      if (response != null) {
+        print(response);
+        setState(() {
+          editLocalizacaoController.text = response['cep'] ?? '';
+          logradouroController.text = response['logradouro'] ?? '';
+          bairroController.text = response['bairro'] ?? '';
+          localidadeController.text = response['localidade'] ?? '';
+        });
+        print("CEP atualizado com sucesso");
+      } else {
+        print("CEP não encontrado");
+      }
+    } catch (e) {
+      print("Erro ao recuperar CEP: $e");
     }
-  } catch (e) {
-    print("Erro ao recuperar CEP: $e");
-  }
   }
 
   @override
@@ -252,7 +252,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
                 isCell: true,
               ),
               const SizedBox(height: 20),
-            
+
               // Essa parte é pra separar a parte das info pessoais com o CEP - Atenção guilherme não precisa colocar const antes. Aceite as cores azuis
               Row(children: <Widget>[
                 Expanded(
@@ -289,7 +289,11 @@ class _MeuPerfilState extends State<MeuPerfil> {
                   const SizedBox(width: 10), // Espaço entre o input e o botão
                   SizedBox(
                     width: 150, // Defina uma largura fixa para o botão
-                    child: IconButton(onPressed: recuperarCep, icon: const Icon(Icons.search),tooltip: "Pesquisar CEP",),
+                    child: IconButton(
+                      onPressed: recuperarCep,
+                      icon: const Icon(Icons.search),
+                      tooltip: "Pesquisar CEP",
+                    ),
                   ),
                 ],
               ),
@@ -312,7 +316,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
                 isDate: false,
                 isCell: false,
               ),
-              
+
               const SizedBox(height: 20),
               NewEditable(
                 LabelText: "Localidade",

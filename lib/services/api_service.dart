@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io'; // Para usar HttpClient e permitir certificados autoassinados
+import 'package:http/io_client.dart';
 import 'package:http/http.dart' as http;
 import '../models/User.dart';
 
@@ -6,11 +8,24 @@ class ApiService {
   final String baseUrl;
 
   ApiService(this.baseUrl);
-  // Função para recuperar dados de usuário
+
+  // Função para criar o cliente HTTP com suporte a certificados autoassinados
+  http.Client _getHttpClient() {
+    // Ignorar erros de certificado (somente para desenvolvimento)
+    HttpClient httpClient = HttpClient()
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) =>
+              true; // Ignora erro de certificado
+    return IOClient(httpClient); // Retorna o IOClient configurado
+  }
+
+  // Função para fazer login
   Future<Map<String, dynamic>> logarUsuario(
       String endpoint, String email, String senha) async {
     try {
-      final response = await http.post(
+      final client = _getHttpClient(); // Obtém o cliente HTTP configurado
+
+      final response = await client.post(
         Uri.parse('$baseUrl$endpoint'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({"email": email, "password": senha}),
@@ -27,8 +42,7 @@ class ApiService {
         }
       } else {
         final Map<String, dynamic> respostaErro = jsonDecode(response.body);
-        print("Erro de autenticação: ${response.body}");
-
+        print("Erro de autenticação: ${respostaErro['message']}");
         return {'user': null, 'statusCode': respostaErro['code']};
       }
     } catch (e) {
@@ -41,11 +55,14 @@ class ApiService {
   Future<http.Response> conexaoPost(
       String endpoint, Map<String, dynamic> data) async {
     try {
-      final response = await http.post(
+      final client = _getHttpClient(); // Obtém o cliente HTTP configurado
+
+      final response = await client.post(
         Uri.parse('$baseUrl$endpoint'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(data),
       );
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         print("POST bem sucedido: ${response.body}");
       } else {

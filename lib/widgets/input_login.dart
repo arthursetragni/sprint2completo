@@ -30,13 +30,13 @@ class InputLogin extends StatelessWidget {
           TextField(
             controller: controller,
             obscureText: isPassword,
-            inputFormatters: isEmail ?
-            [
-              FilteringTextInputFormatter.allow(
-                RegExp(r'[a-zA-Z0-9@._]'),
-              ),
-            ]
-            :[],
+            inputFormatters: isEmail
+                ? [
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'[a-zA-Z0-9@._]'),
+                    ),
+                  ]
+                : [],
             decoration: InputDecoration(
               border: const OutlineInputBorder(),
               labelText: label, // Label do campo

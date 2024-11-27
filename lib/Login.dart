@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:login/models/User.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'home.dart';
 import 'widgets/input_login.dart';
@@ -94,10 +93,12 @@ class _LoginState extends State<Login> {
           SnackBar(content: Text(errorMessage)),
         );
       }
-    }else{
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Erro ao realizar Login. Tente novamente mais tarde")),
-        );
+        SnackBar(
+            content:
+                Text("Erro ao realizar Login. Tente novamente mais tarde")),
+      );
     }
   }
 

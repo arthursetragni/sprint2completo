@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 
 class EditableField extends StatelessWidget {
   final String title;
-  final TextEditingController label;
   final TextEditingController controller;
   final ValueChanged<String>? onChanged;
 
   const EditableField({
     super.key,
     required this.title,
-    required this.label,
     required this.controller,
     this.onChanged,
   });
@@ -39,9 +37,8 @@ class EditableField extends StatelessWidget {
                 onChanged!(value);
               }
             },
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               border: OutlineInputBorder(),
-              labelText: label.text,
               contentPadding:
                   EdgeInsets.symmetric(horizontal: 12, vertical: 13),
               isDense: true, // Reduz o tamanho do campo
