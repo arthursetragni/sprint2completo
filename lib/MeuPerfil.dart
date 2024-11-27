@@ -316,6 +316,9 @@ class _MeuPerfilState extends State<MeuPerfil> {
     if (editLocalizacaoController.text == '') {
       editLocalizacaoController.text = localizacaoController.text;
     }
+    if (editDataNascimento == null) {
+      editDataNascimento = dataNascimento;
+    }
   }
 
   Future<void> updateUser(String id) async {
@@ -323,10 +326,10 @@ class _MeuPerfilState extends State<MeuPerfil> {
     final data = {
       'name': editNomeController.text,
       'email': editEmailController.text, //editEmailController.text,
-      'dataNascimento': dataNascimento?.toIso8601String(),
+      'date_of_birth': dataNascimento?.toIso8601String(),
       'genero': genero,
-      'telefone': editTelefoneController.text,
-      'localizacao': editLocalizacaoController.text,
+      'telephone': editTelefoneController.text,
+      'adress': editLocalizacaoController.text,
     };
     print('Dados enviados para o backend: $data');
 
@@ -353,7 +356,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
 
         User usuarioAtualizado = User(
           //PRA QUE ISSO?
-          email: emailController.text,
+          email: editEmailController.text,
           name: editNomeController.text,
           //email: editEmailController.text,
           date_of_birth: dataNascimento,
