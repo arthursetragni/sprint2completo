@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/Avaliacao.dart';
 
-//vale a pena fazer dps uma busca por id de usuário
 
 class AvaliacaoService {
   //definição da classe
