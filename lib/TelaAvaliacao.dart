@@ -2,8 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'widgets/botao_recebe_icon.dart';
-import 'widgets/botao_cor_tamanho.dart';
-import 'services/avaliacao_service.dart'; 
+import 'services/avaliacao_service.dart';
 import 'models/User.dart';
 
 class TelaAvaliacao extends StatefulWidget {
@@ -41,22 +40,22 @@ class _TelaAvaliacaoState extends State<TelaAvaliacao> {
       return;
     }
 
-    if (_avaliacaoSelecionada == 0 || _comentarioController.text.isEmpty) {
-      print('Avaliação e comentário são obrigatórios.');
+    if (_avaliacaoSelecionada == 0) {
+      print('Avaliação obrigatória');
       return;
     }
 
     final data = {
-      "idAvaliador": usuario!.id, // ID do usuário logado
-      "idAvaliado": 1, 
-      "idServico": 2, 
+      "idAvaliador": "670e9f8ee6657b99823ce0f5",
+      "idAvaliado": "670e9f8ee6657b99823ce0f5",
+      "idServico": "67325e8cdba63ef7c5e4c31e",
       "data": DateTime.now().toIso8601String(),
       "nota": _avaliacaoSelecionada,
       "comentario": _comentarioController.text,
     };
 
     try {
-      final response = await _avaliacaoService.conexaoPost('/avaliacoes', data);
+      final response = await _avaliacaoService.conexaoPost('avaliacao', data);
       if (response.statusCode == 201) {
         print("Avaliação salva com sucesso!");
         Navigator.pop(context);
@@ -80,39 +79,38 @@ class _TelaAvaliacaoState extends State<TelaAvaliacao> {
       appBar: AppBar(
         title: Text('Avaliação'),
         centerTitle: true,
+        actions: [
+          TextButton(
+            onPressed: _salvarAvaliacao,
+            child: Text(
+              'Postar',
+              style: TextStyle(color: Colors.red, fontSize: 16),
+            ),
+          ),
+        ],
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Título
-            Column(
-              children: [
-                Text(
-                  'Avalie o serviço',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 5),
-                Divider(color: Colors.black, thickness: 1),
-              ],
-            ),
-            const SizedBox(height: 20),
-
             // Estrelas de Avaliação
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(5, (index) {
-                return BotaoRecebeIcon(
-                  Icons.star,
-                  iconColor: index < _avaliacaoSelecionada
-                      ? Colors.yellow
-                      : Colors.grey,
-                  iconSize: 40,
+                return IconButton(
+                  icon: Icon(
+                    Icons.star,
+                    color: index < _avaliacaoSelecionada
+                        ? Colors.yellow
+                        : Colors.grey,
+                    size: 40,
+                  ),
                   onPressed: () => _selecionarAvaliacao(index + 1),
                 );
               }),
             ),
+
             const SizedBox(height: 20),
 
             // Campo de Comentário
@@ -120,48 +118,25 @@ class _TelaAvaliacaoState extends State<TelaAvaliacao> {
               controller: _comentarioController,
               maxLines: 5,
               decoration: InputDecoration(
-                hintText: 'Deixe um comentário... (obrigatório)',
+                hintText: 'Conte-nos o que achou do serviço...',
                 border: OutlineInputBorder(),
               ),
             ),
+
             const SizedBox(height: 20),
 
-            // Botão para Adicionar Imagem
-            ElevatedButton(
+            // Botão de Adicionar Fotos
+            ElevatedButton.icon(
               onPressed: () {
-                // Ação para adicionar imagem
                 print("Funcionalidade de adicionar imagens ainda não implementada.");
               },
+              icon: Icon(Icons.photo_camera),
+              label: Text('Adicionar fotos'),
               style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.black,
+                foregroundColor: Colors.red,
                 backgroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  side: BorderSide(color: Colors.black),
-                ),
+                side: BorderSide(color: Colors.red),
               ),
-              child: Text('Clique aqui para adicionar imagens +'),
-            ),
-            const SizedBox(height: 30),
-
-            // Botões de Cancelar e Salvar
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                BotaoCorTamanho(
-                  label: 'Cancelar',
-                  color: Colors.red,
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                BotaoCorTamanho(
-                  label: 'Salvar',
-                  color: Colors.green,
-                  onPressed: _salvarAvaliacao,
-                ),
-              ],
             ),
           ],
         ),
