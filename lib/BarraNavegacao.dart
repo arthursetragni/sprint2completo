@@ -3,6 +3,7 @@ import 'BarraPesquisa.dart';
 import 'MeusPedidos.dart';
 import 'home.dart'; // Importando a página de "Home"
 import 'widgets/barra_nav.dart';
+import 'ExibicaoPorCategoria.dart';
 
 class BarraNavegacao extends StatefulWidget {
   @override
@@ -16,7 +17,6 @@ class _BarraNavegacaoState extends State<BarraNavegacao> {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     return Scaffold(
-      // Local antigo da navigation bar
       body: <Widget>[
         Column(), // Página inicial
 
@@ -38,36 +38,52 @@ class _BarraNavegacaoState extends State<BarraNavegacao> {
                     categorias.length, // Número de cards a serem exibidos
                 itemBuilder: (context, index) {
                   final Map<String, String> categoria = categorias[index];
-                  return Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 4,
-                    child: Stack(
-                      children: [
-                        if (categoria.containsKey('imagem') &&
-                            categoria['imagem'] != null)
-                          Positioned.fill(
-                            child: Opacity(
-                              opacity:
-                                  0.6, // Transparência para destacar o texto
-                              child: Image.network(
-                                categoria['imagem']!,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        Center(
-                          child: Text(
-                            categoria['nome']!,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Color.fromARGB(255, 0, 0, 0),
-                            ),
+                  return InkWell(
+                    onTap: () {
+                      /*
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ExibicaoPorCategoria (
+                            nomeCategoria: categoria['nome']!,
+                            servicos: _getServicosPorCategoria(categoria['nome']!), 
                           ),
                         ),
-                      ],
+                      );
+                      */
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 4,
+                      child: Stack(
+                        children: [
+                          if (categoria.containsKey('imagem') &&
+                              categoria['imagem'] != null)
+                            Positioned.fill(
+                              child: Opacity(
+                                opacity: 0.6, // Transparência para destacar o texto
+                                child: Image.network(
+                                  categoria['imagem']!,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          Center(
+                            child: Text(
+                              categoria['nome']!,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
