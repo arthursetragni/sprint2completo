@@ -257,7 +257,7 @@ class _HomeState extends State<Home> {
 class ApiServices {
   // URL base da API, definida como constante
   static const String baseUrl =
-      "https://a818e189411ced5f77a53d57ecc59f11.serveo.net";
+      "http://localhost:3000";
 
   // Método para gerar a URL de rotas específicas
   static String endpoint(String path) {

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart'; // para acessar SharedPreferences
+import 'models/User.dart';
 
 
 class DetalheServivo extends StatefulWidget {
@@ -25,30 +27,102 @@ class _DetalheServivoState extends State<DetalheServivo> {
   //     });
   //   });
   // }
+  void _inscreverUsuario(String trabalhoId) async {
+    try {
+      // Recupera o ID do usuário do SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      final usuarioJson = prefs.getString("usuario");
+
+      if (usuarioJson != null) {
+        final user = User.fromJson(jsonDecode(usuarioJson));
+        final userId = user.id;
+
+        // Prepara o corpo da requisição
+        final body = jsonEncode({
+          "id": trabalhoId,
+          "id_executor": userId,
+        });
+
+        // Faz a requisição POST para o back-end
+        final response = await http.post(
+          Uri.parse(ApiServices.endpoint("/servico/inscrever")),
+          headers: {"Content-Type": "application/json"},
+          body: body,
+        );
+
+        // Verifica a resposta do servidor
+        if (response.statusCode == 200) {
+          // Exibe um alerta de sucesso
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text("Sucesso"),
+                content: const Text("Você se inscreveu com sucesso!"),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("OK"),
+                  ),
+                ],
+              );
+            },
+          );
+        } else {
+          // Trata erros da API
+          throw Exception("Erro ao se inscrever: ${response.body}");
+        }
+      } else {
+        throw Exception("Usuário não encontrado no SharedPreferences.");
+      }
+    } catch (e) {
+      // Exibe um alerta de erro
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Erro"),
+            content: Text("Falha ao se inscrever: $e"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
 
   Future<List<dynamic>> _loadJobs(String trabalhoId) async {
-  print(trabalhoId);
+    print(trabalhoId);
 
-  try {
-    final response = await http.get(Uri.parse(ApiServices.endpoint("/servico/$trabalhoId")));
+    try {
+      final response = await http.get(Uri.parse(ApiServices.endpoint("/servico/$trabalhoId")));
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
 
-      if (data['servico'] != null) {
-        // Retorna o serviço dentro de uma lista
-        return [data['servico']];
+        if (data['servico'] != null) {
+          // Retorna o serviço dentro de uma lista
+          return [data['servico']];
+        } else {
+          throw Exception('Serviço não encontrado no backend.');
+        }
       } else {
-        throw Exception('Serviço não encontrado no backend.');
+        throw Exception('Erro ao carregar os serviços. Código: ${response.statusCode}');
       }
-    } else {
-      throw Exception('Erro ao carregar os serviços. Código: ${response.statusCode}');
+    } catch (e) {
+      print("Erro: $e");
+      throw Exception('Erro ao carregar os serviços.');
     }
-  } catch (e) {
-    print("Erro: $e");
-    throw Exception('Erro ao carregar os serviços.');
   }
-}
 
 
   @override
@@ -57,11 +131,13 @@ class _DetalheServivoState extends State<DetalheServivo> {
 
     print(trabalhoId);
 
-     _loadJobs(trabalhoId).then((data) {
-      setState(() {
-        jobs = data;
+     if (jobs.isEmpty) {
+      _loadJobs(trabalhoId).then((data) {
+        setState(() {
+          jobs = data;
+        });
       });
-    });
+    }
 
     // Verifica se os trabalhos já foram carregados e busca o trabalho correto
     if (jobs.isNotEmpty) {
@@ -165,26 +241,31 @@ class _DetalheServivoState extends State<DetalheServivo> {
                           ),
                         ),
                         IntrinsicHeight(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              color: const Color(0xFFCC3733),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 17),
-                            margin: const EdgeInsets.only(
-                                bottom: 145, left: 145, right: 145),
-                            width: double.infinity,
-                            child: const Column(
-                              children: [
-                                Text(
-                                  "Inscrever-se",
-                                  style: TextStyle(
-                                    color: Color(0xFFFFFFFF),
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+                          child: GestureDetector(
+                            onTap: () {
+                              _inscreverUsuario(trabalhoId);
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                color: const Color(0xFFCC3733),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 17),
+                              margin: const EdgeInsets.only(
+                                  bottom: 145, left: 145, right: 145),
+                              width: double.infinity,
+                              child: const Column(
+                                children: [
+                                  Text(
+                                    "Inscrever-se",
+                                    style: TextStyle(
+                                      color: Color(0xFFFFFFFF),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -231,7 +312,7 @@ class _DetalheServivoState extends State<DetalheServivo> {
 
 class ApiServices {
   // URL base da API, definida como constante
-  static const String baseUrl = "https://a818e189411ced5f77a53d57ecc59f11.serveo.net";
+  static const String baseUrl = "http://localhost:3000";
 
   // Método para gerar a URL de rotas específicas
   static String endpoint(String path) {
