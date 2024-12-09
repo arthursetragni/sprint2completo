@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'services/avaliacao_service.dart';
 import 'models/User.dart';
+import 'models/Avaliacao.dart';
 
 class TelaAvaliacao extends StatefulWidget {
   @override
@@ -13,15 +14,13 @@ class _TelaAvaliacaoState extends State<TelaAvaliacao> {
   int _avaliacaoSelecionada = 0;
   final TextEditingController _comentarioController = TextEditingController();
   User? usuario;
-  final AvaliacaoService _avaliacaoService =
-      AvaliacaoService("https://backend-lddm.vercel.app/");
-  String idAvaliacao = "67325e8cdba63ef7c5e4c31e"; // Substitua pelo ID real.
+  final AvaliacaoService _avaliacaoService = AvaliacaoService("http://localhost:3000/");
 
   @override
   void initState() {
     super.initState();
-    _carregarUsuarioLogado();
-  }
+      _carregarUsuarioLogado();
+    }
 
   Future<void> _carregarUsuarioLogado() async {
     final prefs = await SharedPreferences.getInstance();
@@ -48,12 +47,12 @@ class _TelaAvaliacaoState extends State<TelaAvaliacao> {
     }
 
     final data = {
-      "idAvaliador": "670e9f8ee6657b99823ce0f5",
-      "idAvaliado": "670e9f8ee6657b99823ce0f5",
-      "idServico": idAvaliacao,
-      "data": DateTime.now().toIso8601String(),
-      "nota": _avaliacaoSelecionada,
+      "idAvaliado": "670e9f8ee6657b99823ce0f5", //dps da tela de pedidos colocar dinâmico
+      "ID_Avaliador": usuario,
+      "ID_Servico": "670e9f8ee6657b99823ce0f5", //idem
       "comentario": _comentarioController.text,
+      "nota": _avaliacaoSelecionada,
+      "data": DateTime.now().toIso8601String(),
     };
 
     try {
@@ -67,6 +66,7 @@ class _TelaAvaliacaoState extends State<TelaAvaliacao> {
       _mostrarMensagem('Erro', 'Exceção ao salvar avaliação: $e', false);
     }
   }
+
 
   Future<void> _excluirAvaliacao(String id) async {
     if (id.isEmpty) {
@@ -148,7 +148,7 @@ class _TelaAvaliacaoState extends State<TelaAvaliacao> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Fecha o diálogo
-                _excluirAvaliacao(idAvaliacao); // Chama o método de exclusão
+                //_excluirAvaliacao(idAvaliacao); // Chama o método de exclusão
               },
               child: Text('EXCLUIR'),
             ),
@@ -209,7 +209,7 @@ class _TelaAvaliacaoState extends State<TelaAvaliacao> {
             ),
 
             const SizedBox(height: 20),
-
+            /*
             // Botão de Adicionar Fotos
             ElevatedButton.icon(
               onPressed: () {
@@ -224,6 +224,7 @@ class _TelaAvaliacaoState extends State<TelaAvaliacao> {
                 side: BorderSide(color: Colors.red),
               ),
             ),
+            */
           ],
         ),
       ),

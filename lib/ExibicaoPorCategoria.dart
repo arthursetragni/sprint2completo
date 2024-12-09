@@ -1,3 +1,4 @@
+/*
 import 'package:flutter/material.dart';
 import 'widgets/barra_nav.dart';
 import 'package:login/Login.dart';
@@ -10,13 +11,12 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TelaCategoria extends StatelessWidget {
-  final String nomeCategoria; // Nome da categoria, vindo de forma dinâmica
-  final List<Map<String, String>> servicos; // Lista dinâmica de serviços
+  final String nomeCategoria; //nome da categoria, vindo de forma dinâmica
+  //falta buscar os serviços do BD
 
   const TelaCategoria({
     Key? key,
     required this.nomeCategoria,
-    required this.servicos,
   }) : super(key: key);
 
   @override
@@ -98,20 +98,10 @@ class TelaCategoria extends StatelessWidget {
           );
         },
       ),
-      bottomNavigationBar: const BarraNav(), // Sua bottomNavigationBar existente
+      bottomNavigationBar: const BarraNav(), 
     );
   }
 }
 
-List<Map<String, String>> servicos = [
-  {
-    'nome': 'João Luiz Neves',
-    'descricao': 'Encanador',
-    'imagem': 'https://via.placeholder.com/150', // Substitua pelo URL real
-  },
-  {
-    'nome': 'David dos Anjos',
-    'descricao': 'Encanador',
-    'imagem': 'https://via.placeholder.com/150', // Substitua pelo URL real
-  },
-];
+
+*/

@@ -10,7 +10,7 @@ class CategoriaService {
   CategoriaService(this.baseUrl);
 
   //excluir uma categoria
-  Future<http.Response> deletarAvaliacao(String endpoint, int id) async {
+  Future<http.Response> deletarCategoria(String endpoint, int id) async {
     try {
       final response = await http.delete(
         Uri.parse('$baseUrl$endpoint/$id'),
@@ -51,7 +51,7 @@ class CategoriaService {
   }
 
   //buscar uma avaliação específica - acho que no nosso caso não será muito usado, mas é bom para questões de teste
-  Future<http.Response> buscarAvaliacaoPorId(String endpoint, int id) async {
+  Future<http.Response> buscarCategoriaPorId(String endpoint, int id) async {
     try {
       final response = await http.get(
         Uri.parse('$baseUrl$endpoint/$id'),
@@ -59,19 +59,19 @@ class CategoriaService {
       );
 
       if (response.statusCode == 200) {
-        print("Avaliação encontrada: ${response.body}");
+        print("Categoria encontrada: ${response.body}");
       } else {
         print("Erro ao buscar avaliação: ${response.statusCode}");
       }
       return response;
     } catch (e) {
-      print("Exceção ao buscar avaliação: $e");
+      print("Exceção ao buscar Categoria: $e");
       rethrow;
     }
   }
 
   //listar todas as categorias 
-  Future<http.Response> listarAvaliacoes(String endpoint) async {
+  Future<http.Response> listarCategorias(String endpoint) async {
     try {
       final response = await http.get(
         Uri.parse('$baseUrl$endpoint'),
