@@ -27,45 +27,47 @@ class _TelaAvaliacaoState extends State<TelaAvaliacao> {
     final usuarioJson = prefs.getString("usuario");
     if (usuarioJson != null) {
       setState(() {
+        
         usuario = User.fromJson(jsonDecode(usuarioJson));
+        print(usuario!.id);
       });
     } else {
       print('Nenhum usuário logado encontrado');
     }
   }
 
-  Future<void> _salvarAvaliacao() async {
-    if (usuario == null) {
-      _mostrarMensagem(
-          'Erro', 'Usuário não encontrado. Faça login novamente.', false);
-      return;
-    }
-
-    if (_avaliacaoSelecionada == 0) {
-      _mostrarMensagem('Erro', 'Selecione uma nota antes de enviar.', false);
-      return;
-    }
-
-    final data = {
-      "idAvaliado": "670e9f8ee6657b99823ce0f5", //dps da tela de pedidos colocar dinâmico
-      "ID_Avaliador": usuario,
-      "ID_Servico": "670e9f8ee6657b99823ce0f5", //idem
-      "comentario": _comentarioController.text,
-      "nota": _avaliacaoSelecionada,
-      "data": DateTime.now().toIso8601String(),
-    };
-
-    try {
-      final response = await _avaliacaoService.conexaoPost('avaliacao', data);
-      if (response.statusCode == 201) {
-        _mostrarMensagem('Sucesso', 'Avaliação enviada com sucesso!', true);
-      } else {
-        _mostrarMensagem('Erro', 'Erro ao salvar avaliação!', false);
+    Future<void> _salvarAvaliacao() async {
+      if (usuario == null) {
+        _mostrarMensagem(
+            'Erro', 'Usuário não encontrado. Faça login novamente.', false);
+        return;
       }
-    } catch (e) {
-      _mostrarMensagem('Erro', 'Exceção ao salvar avaliação: $e', false);
+
+      if (_avaliacaoSelecionada == 0) {
+        _mostrarMensagem('Erro', 'Selecione uma nota antes de enviar.', false);
+        return;
+      }
+
+      final data = {
+        "ID_Avaliado": "670e9f8ee6657b99823ce0f5", 
+        "ID_Avaliador": usuario!.id, 
+        "ID_Servico": "670e9f8ee6657b99823ce0f5", 
+        "comentario": _comentarioController.text,
+        "nota": _avaliacaoSelecionada,
+        "data": DateTime.now().toIso8601String(),
+      };
+
+      try {
+        final response = await _avaliacaoService.criaAvaliacao('avaliacao', data);
+        if (response.statusCode >= 200 && response.statusCode < 300) {
+          _mostrarMensagem('Sucesso', 'Avaliação enviada com sucesso!', true);
+        } else {
+          _mostrarMensagem('Erro', 'Erro ao salvar avaliação!', false);
+        }
+      } catch (e) {
+        _mostrarMensagem('Erro', 'Exceção ao salvar avaliação: $e', false);
+      }
     }
-  }
 
 
   Future<void> _excluirAvaliacao(String id) async {

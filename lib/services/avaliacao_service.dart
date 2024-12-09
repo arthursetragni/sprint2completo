@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/Avaliacao.dart';
@@ -10,15 +11,15 @@ class AvaliacaoService {
   AvaliacaoService(this.baseUrl);
 
   //função para fazer avaliação
-  Future<http.Response> conexaoPost (String endpoint, Map<String, dynamic> data) async {
-    //conexão
+  Future<http.Response> criaAvaliacao(String endpoint, Map<String, dynamic> data) async {
     try {
+      print(data);
       final response = await http.post(
         Uri.parse('$baseUrl$endpoint'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(data),
       );
-      //testar se deu certo a avaliação ou não
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         print("Avaliação enviada com sucesso: ${response.body}");
       } else {
