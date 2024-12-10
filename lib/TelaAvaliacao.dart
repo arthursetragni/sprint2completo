@@ -15,8 +15,7 @@ class _TelaAvaliacaoState extends State<TelaAvaliacao> {
   final TextEditingController _comentarioController = TextEditingController();
   User? usuario;
   Avaliacao? avaliacaoExistente;
-  final AvaliacaoService _avaliacaoService = AvaliacaoService("http://localhost:3000/");
-  //final AvaliacaoService _avaliacaoService = AvaliacaoService("https://backend-lddm.vercel.app/");
+  final AvaliacaoService _avaliacaoService = AvaliacaoService("http://localhost:3000/"); // Ou use o link de produção
 
   @override
   void initState() {
@@ -31,7 +30,7 @@ class _TelaAvaliacaoState extends State<TelaAvaliacao> {
       setState(() {
         usuario = User.fromJson(jsonDecode(usuarioJson));
         print(usuario!.id);
-        _carregarAvaliacoesFiltradas(); // Carregar avaliações filtradas
+        _carregarAvaliacoesFiltradas();
       });
     } else {
       print('Nenhum usuário logado encontrado');
@@ -42,26 +41,20 @@ class _TelaAvaliacaoState extends State<TelaAvaliacao> {
     if (usuario == null) return;
 
     try {
-      // Chama o método para listar todas as avaliações
       final response = await _avaliacaoService.listarAvaliacoes('avaliacao');
       
       if (response.statusCode == 200) {
-        // Tenta decodificar o corpo da resposta
         final responseBody = jsonDecode(response.body);
 
-        // Verifica se a resposta contém a chave 'avaliacoes' e se é uma lista
         if (responseBody.containsKey('avaliacoes') && responseBody['avaliacoes'] is List) {
           final List<dynamic> avaliacaoListJson = responseBody['avaliacoes'];
 
-          // Mapeia os dados para a lista de objetos Avaliacao
           List<Avaliacao> avaliacoes = avaliacaoListJson.map((json) => Avaliacao.fromJson(json)).toList();
 
-          // Filtra as avaliações para pegar a do usuário e do serviço específico
           final avaliacoesFiltradas = avaliacoes.where((avaliacao) {
-            return avaliacao.ID_Avaliador == usuario!.id && avaliacao.ID_Avaliado == '670e9f8ee6657b99823ce0f5';
+            return avaliacao.ID_Avaliador == usuario!.id && avaliacao.ID_Avaliado == '670e9f8ee6657b99823ce0f5'; // Modifique o ID_Avaliado conforme necessário
           }).toList();
 
-          // Se encontrar alguma avaliação filtrada, exibe a primeira avaliação
           setState(() {
             if (avaliacoesFiltradas.isNotEmpty) {
               avaliacaoExistente = avaliacoesFiltradas.first;
@@ -69,7 +62,6 @@ class _TelaAvaliacaoState extends State<TelaAvaliacao> {
               _comentarioController.text = avaliacaoExistente!.comentario ?? '';
             } else {
               print('Nenhuma avaliação encontrada para o usuário e serviço especificados');
-              // Caso não haja avaliação encontrada, podemos resetar os campos.
               _avaliacaoSelecionada = 0;
               _comentarioController.clear();
             }
@@ -85,9 +77,6 @@ class _TelaAvaliacaoState extends State<TelaAvaliacao> {
     }
   }
 
-
-
-
   Future<void> _salvarAvaliacao() async {
     if (usuario == null) {
       _mostrarMensagem('Erro', 'Usuário não encontrado. Faça login novamente.', false);
@@ -100,9 +89,9 @@ class _TelaAvaliacaoState extends State<TelaAvaliacao> {
     }
 
     final data = {
-      "ID_Avaliado": "670e9f8ee6657b99823ce0f5",
+      "ID_Avaliado": "670e9f8ee6657b99823ce0f5", // Modifique conforme necessário
       "ID_Avaliador": usuario!.id,
-      "ID_Servico": "670e9f8ee6657b99823ce0f5",
+      "ID_Servico": "670e9f8ee6657b99823ce0f5", // Modifique conforme necessário
       "comentario": _comentarioController.text,
       "nota": _avaliacaoSelecionada,
       "data": DateTime.now().toIso8601String(),
@@ -110,15 +99,9 @@ class _TelaAvaliacaoState extends State<TelaAvaliacao> {
 
     try {
       if (avaliacaoExistente != null) {
-        // Se a avaliação já existe, realiza a atualização (PUT)
-        final response = await _avaliacaoService.atualizarAvaliacao(
-          'avaliacao', 
-          avaliacaoExistente!.id, 
-          data,
-        );
+        final response = await _avaliacaoService.atualizarAvaliacao('avaliacao', avaliacaoExistente!.id, data);
 
         if (response.statusCode >= 200 && response.statusCode < 300) {
-          // Atualize a interface com a avaliação atualizada
           setState(() {
             avaliacaoExistente!.comentario = _comentarioController.text;
             avaliacaoExistente!.nota = _avaliacaoSelecionada;
@@ -129,7 +112,6 @@ class _TelaAvaliacaoState extends State<TelaAvaliacao> {
           _mostrarMensagem('Erro', 'Erro ao atualizar avaliação!', false);
         }
       } else {
-        // Caso contrário, realiza a criação da avaliação (POST)
         final response = await _avaliacaoService.criaAvaliacao('avaliacao', data);
         if (response.statusCode >= 200 && response.statusCode < 300) {
           _mostrarMensagem('Sucesso', 'Avaliação enviada com sucesso!', true);
@@ -141,8 +123,6 @@ class _TelaAvaliacaoState extends State<TelaAvaliacao> {
       _mostrarMensagem('Erro', 'Exceção ao salvar avaliação: $e', false);
     }
   }
-
-
 
   Future<void> _excluirAvaliacao(String id) async {
     if (id.isEmpty) {
@@ -160,11 +140,7 @@ class _TelaAvaliacaoState extends State<TelaAvaliacao> {
           _comentarioController.clear();
         });
       } else {
-        _mostrarMensagem(
-          'Erro',
-          'Não foi possível excluir a avaliação. Código: ${response.statusCode}',
-          false,
-        );
+        _mostrarMensagem('Erro', 'Não foi possível excluir a avaliação. Código: ${response.statusCode}', false);
       }
     } catch (e) {
       _mostrarMensagem('Erro', 'Erro ao excluir avaliação: $e', false);
@@ -193,7 +169,7 @@ class _TelaAvaliacaoState extends State<TelaAvaliacao> {
               onPressed: () {
                 Navigator.of(context).pop();
                 if (sucesso) {
-                  Navigator.pop(context); // Fecha a tela de avaliação em caso de sucesso
+                  Navigator.pop(context);
                 }
               },
               child: Text('FECHAR'),
@@ -221,13 +197,13 @@ class _TelaAvaliacaoState extends State<TelaAvaliacao> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Fecha o diálogo
+                Navigator.of(context).pop();
               },
               child: Text('CANCELAR'),
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Fecha o diálogo
+                Navigator.of(context).pop();
                 if (avaliacaoExistente != null) {
                   _excluirAvaliacao(avaliacaoExistente!.id);
                 }
@@ -298,11 +274,11 @@ class _TelaAvaliacaoState extends State<TelaAvaliacao> {
       ),
       floatingActionButton: avaliacaoExistente != null
           ? Container(
-              width: 60, // Tamanho do botão
+              width: 60, 
               height: 60,
               child: FloatingActionButton(
                 onPressed: _confirmarExclusao,
-                backgroundColor: Colors.white, // Fundo branco
+                backgroundColor: Colors.white,
                 child: Icon(
                   Icons.delete,
                   color: Colors.red,
@@ -314,6 +290,7 @@ class _TelaAvaliacaoState extends State<TelaAvaliacao> {
     );
   }
 }
+
 
 /*
 import 'dart:convert';
