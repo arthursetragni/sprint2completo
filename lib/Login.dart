@@ -23,7 +23,8 @@ class _LoginState extends State<Login> {
   final TextEditingController _emailControllerText = TextEditingController();
   final TextEditingController _senhaControllerText = TextEditingController();
   // Url base
-  final apiService = ApiService("http://localhost:3000/");
+  //final apiService = ApiService("http://localhost:3000/");
+  final apiService = ApiService("https://backend-lddm.vercel.app/");
   late User? usuario; // Variável para armazenar o usuário recuperado
   @override
   void initState() {

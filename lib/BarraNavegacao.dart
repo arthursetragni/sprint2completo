@@ -192,7 +192,8 @@ class BarraNavegacao extends StatefulWidget {
 
 class _BarraNavegacaoState extends State<BarraNavegacao> {
   int currentPageIndex = 1;
-  final String _baseUrl = "http://localhost:3000"; // URL base do backend
+  //final String _baseUrl = "http://localhost:3000"; // URL base do backend
+  final String _baseUrl = "https://backend-lddm.vercel.app/";
 
   List<Map<String, dynamic>> _todosServicos = []; // Lista de todos os serviços
   List<Map<String, dynamic>> _servicosFiltrados = []; // Lista de serviços filtrados por categoria
