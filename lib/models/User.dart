@@ -5,7 +5,7 @@ class User {
   String? gender;
   String? telephone;
   String? adress;
-  DateTime? date_of_birth;
+  dynamic date_of_birth;
 
   User(
       {required this.id,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:login/Login.dart';
 import 'widgets/barra_nav.dart'; //barra de navegação
 //import 'widgets/editable_field.dart'; //campo de texto
-import 'widgets/editable_datafield.dart'; //campo de data
+//import 'widgets/editable_datafield.dart'; //campo de data
 //import 'widgets/ActionButton.dart'; // old buttons
 import 'widgets/genero_botao.dart'; //campo de gênero
 import 'package:http/http.dart' as http; // Para requisições HTTP
@@ -12,6 +12,7 @@ import 'models/User.dart'; // Modelo de usuário
 import 'package:awesome_dialog/awesome_dialog.dart'; // Para caixas de diálogo pop up
 import 'widgets/text_editable.dart';
 import 'package:intl/intl.dart';
+import 'widgets/cep.dart';
 //import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 //import 'widgets/input_login.dart'; //campo de texto para teste TESTE
 
@@ -67,29 +68,33 @@ class _MeuPerfilState extends State<MeuPerfil> {
         nomeController.text = usuario!.name; // Assume que o nome não é nulo
         emailController.text = usuario!.email; // Assume que o email não é nulo
         telefoneController.text = usuario!.telephone ??
-            '(XX) XXXX-XXXX'; //prefs.getString('telefone') ?? '';
+            '(XX) XXXX-XXXX'; // prefs.getString('telefone') ?? '';
         localizacaoController.text = usuario!.adress ??
-            'XXXXX-XXX'; //prefs.getString('localizacao') ?? '';
-        //OLD DATA //dataNascimento = DateTime.tryParse(usuario!.date_of_birth as String? ?? '');
+            'XXXXX-XXX'; // prefs.getString('localizacao') ?? '';
+
+// Alteração na manipulação da data de nascimento
         try {
-          // Parse a string ISO 8601 para DateTime
-          DateTime dateTime =
-              DateTime.parse(usuario!.date_of_birth!.toIso8601String());
+          // Verifique se a data está em formato ISO 8601 e converta para DateTime
+          if (usuario!.date_of_birth != null) {
+            DateTime dateTime = DateTime.parse(usuario!.date_of_birth!);
 
-          // Formatar DateTime para string no formato dd/MM/yyyy
-          String formattedDate = DateFormat('dd/MM/yyyy').format(dateTime);
+            // Formatar a data no formato 'dd/MM/yyyy'
+            String formattedDate = DateFormat('dd/MM/yyyy').format(dateTime);
 
-          print(formattedDate); // Saída: 01/02/2001
+            print(formattedDate); // Saída: 01/02/2001
+          }
         } catch (e) {
           print("Erro ao formatar a data: $e");
         }
 
         DateFormat formatter = DateFormat('dd/MM/yyyy');
         if (usuario!.date_of_birth != null) {
-          dataNascimentoController.text = formatter.format(usuario!
-              .date_of_birth!); // usuario!.date_of_birth as String? ?? 'DD/MM/AAAA';
+          // Atribuindo a data formatada ao controller
+          dataNascimentoController.text =
+              formatter.format(DateTime.parse(usuario!.date_of_birth!));
         }
-        genero = usuario?.gender; //prefs.getString('genero') ?? '';
+
+        genero = usuario?.gender; // prefs.getString('genero') ?? '';
         idUsuario = usuario!.id;
       });
     }
@@ -248,13 +253,20 @@ class _MeuPerfilState extends State<MeuPerfil> {
                 isCell: true,
               ),
               const SizedBox(height: 20),
-              NewEditable(
+
+              /*NewEditable(
                 LabelText: "Localização",
                 controller: editLocalizacaoController,
                 placeholder: localizacaoController.text,
                 isPass: false,
                 isDate: false,
                 isCell: false,
+              ),*/ // OLD CEP
+
+              CepEditable(
+                labelText: "Localização",
+                controller: editLocalizacaoController,
+                placeholder: localizacaoController.text,
               ),
 
               //old editable
@@ -431,6 +443,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
         );
 
         // Atualizando localmente
+        print("chegou pre usuario atualizado");
         User usuarioAtualizado = User(
           email: editEmailController.text,
           name: editNomeController.text,
@@ -440,6 +453,28 @@ class _MeuPerfilState extends State<MeuPerfil> {
           adress: editLocalizacaoController.text,
           id: idUsuario!,
         );
+        Future<void> saveUser(User usuarioAtualizado) async {
+          print("salvando usuario...");
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString(
+              "usuario", jsonEncode(usuarioAtualizado.toJson()));
+          print("Sucesso!");
+        }
+
+        Future<void> printUsuarioSalvo() async {
+          print("printando usuario pos save user novo");
+          final prefs = await SharedPreferences.getInstance();
+          final usuarioJson = prefs.getString("usuario");
+
+          if (usuarioJson != null) {
+            final user = User.fromJson(jsonDecode(usuarioJson));
+            print(
+                "Usuário salvo: Nome: ${user.name}, Email: ${user.email}, Id : ${user.id}\n Genêro: ${user.gender}, Telefone: ${user.telephone}, Endereço: ${user.adress}\n Data de Nascimento: ${user.date_of_birth}");
+          } else {
+            print("Nenhum usuário salvo encontrado.");
+          }
+        }
+
         await _saveUserData(usuarioAtualizado);
         setState(() {
           idUsuario = usuarioAtualizado.id;
@@ -510,7 +545,8 @@ class _MeuPerfilState extends State<MeuPerfil> {
         User usuarioAtualizado = User(
           email: editEmailController.text,
           name: editNomeController.text,
-          date_of_birth: DateTime.tryParse(
+          
+          f_birth: DateTime.tryParse(
               editDataNascimentoController.text), //dataNascimento,
           gender: genero,
           telephone: editTelefoneController.text,
