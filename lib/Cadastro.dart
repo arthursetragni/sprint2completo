@@ -12,7 +12,7 @@ class Cadastro extends StatefulWidget {
 
 class _CadastroState extends State<Cadastro> {
   // Url base
-  final apiService = ApiService("http://localhost:3000/");
+  final apiService = ApiService('https://backend-lddm.vercel.app');
   // Controladores dos inputs
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
