@@ -10,7 +10,7 @@ class BarraPesquisa extends StatefulWidget {
 
 class _BarraPesquisaState extends State<BarraPesquisa> {
   final TextEditingController _controladorPesquisa = TextEditingController();
-  final String _baseUrl = 'https://backend-lddm.vercel.app'; // URL base do backend
+  final String _baseUrl = "http://localhost:3000/"; // URL base do backend
 
   void _aoPressionarPesquisa() async {
     final textoPesquisa = _controladorPesquisa.text;
