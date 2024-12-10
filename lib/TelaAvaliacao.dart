@@ -109,16 +109,40 @@ class _TelaAvaliacaoState extends State<TelaAvaliacao> {
     };
 
     try {
-      final response = await _avaliacaoService.criaAvaliacao('avaliacao', data);
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        _mostrarMensagem('Sucesso', 'Avaliação enviada com sucesso!', true);
+      if (avaliacaoExistente != null) {
+        // Se a avaliação já existe, realiza a atualização (PUT)
+        final response = await _avaliacaoService.atualizarAvaliacao(
+          'avaliacao', 
+          avaliacaoExistente!.id, 
+          data,
+        );
+
+        if (response.statusCode >= 200 && response.statusCode < 300) {
+          // Atualize a interface com a avaliação atualizada
+          setState(() {
+            avaliacaoExistente!.comentario = _comentarioController.text;
+            avaliacaoExistente!.nota = _avaliacaoSelecionada;
+          });
+
+          _mostrarMensagem('Sucesso', 'Avaliação atualizada com sucesso!', true);
+        } else {
+          _mostrarMensagem('Erro', 'Erro ao atualizar avaliação!', false);
+        }
       } else {
-        _mostrarMensagem('Erro', 'Erro ao salvar avaliação!', false);
+        // Caso contrário, realiza a criação da avaliação (POST)
+        final response = await _avaliacaoService.criaAvaliacao('avaliacao', data);
+        if (response.statusCode >= 200 && response.statusCode < 300) {
+          _mostrarMensagem('Sucesso', 'Avaliação enviada com sucesso!', true);
+        } else {
+          _mostrarMensagem('Erro', 'Erro ao salvar avaliação!', false);
+        }
       }
     } catch (e) {
       _mostrarMensagem('Erro', 'Exceção ao salvar avaliação: $e', false);
     }
   }
+
+
 
   Future<void> _excluirAvaliacao(String id) async {
     if (id.isEmpty) {

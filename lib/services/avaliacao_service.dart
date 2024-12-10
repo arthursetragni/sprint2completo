@@ -58,15 +58,17 @@ class AvaliacaoService {
 
       if (response.statusCode == 200) {
         print("Avaliação atualizada com sucesso: ${response.body}");
+        return response;
       } else {
         print("Erro ao atualizar avaliação: ${response.statusCode}");
+        return response;
       }
-      return response;
     } catch (e) {
       print("Exceção ao atualizar avaliação: $e");
       rethrow;
     }
   }
+
 
   Future<http.Response> buscarAvaliacaoPorId(String endpoint, String id) async {
     try {
