@@ -23,8 +23,8 @@ class _MeuPerfilState extends State<MeuPerfil> {
   DateTime? dataNascimento;
   String genero = 'Masculino';
   String? idUsuario;
-  //String rotaBackEnd = 'http://localhost:3000/';
-  String rotaBackEnd = "https://backend-lddm.vercel.app/";
+  String rotaBackEnd = 'http://localhost:3000/';
+  //String rotaBackEnd = "https://backend-lddm.vercel.app/";
   
   @override
   void initState() {

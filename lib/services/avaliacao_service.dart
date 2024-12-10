@@ -3,14 +3,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/Avaliacao.dart';
 
-
 class AvaliacaoService {
-  //definição da classe
   final String baseUrl;
 
   AvaliacaoService(this.baseUrl);
 
-  //função para fazer avaliação
   Future<http.Response> criaAvaliacao(String endpoint, Map<String, dynamic> data) async {
     try {
       print(data);
@@ -32,7 +29,6 @@ class AvaliacaoService {
     }
   }
 
-  //excluir uma avaliação
   Future<http.Response> deletarAvaliacao(String endpoint, String id) async {
     try {
       final response = await http.delete(
@@ -52,7 +48,6 @@ class AvaliacaoService {
     }
   }
 
-    //atualizar uma avaliação
   Future<http.Response> atualizarAvaliacao(String endpoint, String id, Map<String, dynamic> data) async {
     try {
       final response = await http.put(
@@ -73,7 +68,6 @@ class AvaliacaoService {
     }
   }
 
-  //buscar uma avaliação específica - acho que no nosso caso não será muito usado, mas é bom para questões de teste
   Future<http.Response> buscarAvaliacaoPorId(String endpoint, String id) async {
     try {
       final response = await http.get(
@@ -93,7 +87,6 @@ class AvaliacaoService {
     }
   }
 
-  //listar todas as avaliações - vai ser mais usada
   Future<http.Response> listarAvaliacoes(String endpoint) async {
     try {
       final response = await http.get(
@@ -113,10 +106,8 @@ class AvaliacaoService {
     }
   }
 
-  //buscar avaliação pelo ID do usuário relacionado
   Future<http.Response> buscarAvaliacoesPorUsuario(String endpoint, int idAvaliador) async {
     try {
-      //concatena o ID do usuário como um parâmetro no endpoint, facilita pra API na hora da busca
       final response = await http.get(
         Uri.parse('$baseUrl$endpoint?ID_Avaliador=$idAvaliador'),
         headers: {'Content-Type': 'application/json'},
@@ -134,10 +125,8 @@ class AvaliacaoService {
     }
   }
 
-  //buscando todas as avaliações de um trabalhador
   Future<http.Response> buscarAvaliacoesPorTrabalhador(String endpoint, String idAvaliado) async {
     try {
-      //concatena o ID do usuário como um parâmetro no endpoint, facilita pra API na hora da busca
       final response = await http.get(
         Uri.parse('$baseUrl$endpoint?ID_Avaliado=$idAvaliado'),
         headers: {'Content-Type': 'application/json'},
@@ -155,10 +144,8 @@ class AvaliacaoService {
     }
   }
 
-  //buscando todas as avaliações de um serviço
   Future<http.Response> buscarAvaliacoesPorServico(String endpoint, String idServico) async {
     try {
-      //concatena o ID do usuário como um parâmetro no endpoint, facilita pra API na hora da busca
       final response = await http.get(
         Uri.parse('$baseUrl$endpoint?ID_Servico=$idServico'),
         headers: {'Content-Type': 'application/json'},
@@ -175,4 +162,17 @@ class AvaliacaoService {
       rethrow;
     }
   }
+
+  Future<http.Response> buscarAvaliacao(String endpoint, Map<String, String> parametros) async {
+    final response = await http.get(
+        Uri.parse('$baseUrl$endpoint$parametros'),
+        headers: {'Content-Type': 'application/json'},
+      );
+    if (response.statusCode == 200) {
+      print("Avaliação encontrada: ${response.body}");
+    } else {
+      print("Erro ao buscar avaliação: ${response.statusCode}");
+    }
+    return response;
+}
 }
