@@ -9,6 +9,7 @@ import 'home.dart';
 import 'PaginaInicial.dart';
 import 'DetalhePedidoEmAndamento.dart';
 import 'TelaAvaliacao.dart';
+import 'DetalhePedidoConcluido.dart';
 
 void main() => runApp(const MyApp());
 
@@ -36,7 +37,7 @@ class MyApp extends StatelessWidget {
         '/paginaInicial': (context) => PaginaInicial(),
         '/DetalheServicoEmAndamento': (context) => DetalheServicoEmAndamento(),
         '/avaliacao': (context) => TelaAvaliacao(),
-
+        '/DetalheServicoConcluido': (context) => DetalheServicoConcluido(),
       },
     );
   }

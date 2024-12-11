@@ -103,10 +103,10 @@ class _MeusPedidosState extends State<MeusPedidos> {
     if (usuarioJson != null) {
       setState(() {
         usuario = User.fromJson(jsonDecode(usuarioJson));
-        _carregarServicosPorUsuario(usuario!.id);
-        //_carregarServicosPorUsuario("67325de8dba63ef7c5e4c31b");
-        _carregarServicosConcluidos(usuario!.id);
-       // _carregarServicosConcluidos("67325de8dba63ef7c5e4c31b");
+        //_carregarServicosPorUsuario(usuario!.id);
+        _carregarServicosPorUsuario("67325de8dba63ef7c5e4c31b");
+        //_carregarServicosConcluidos(usuario!.id);
+       _carregarServicosConcluidos("67325de8dba63ef7c5e4c31b");
       });
     } else {
       print('Nenhum usuário logado encontrado');
@@ -217,8 +217,8 @@ class PedidosConcluidos extends StatelessWidget {
                   id: pedido['_id'],
                   imagem: imagePath,
                   titulo: pedido['titulo'],
-                  funcionario: pedido['funcionario'] ?? "Não informado",
-                  data: pedido['data'] ?? "Data não especificada",
+                  funcionario: pedido['id_executor'] ?? "Não informado",
+                  data: pedido['data_criacao'] ?? "Data não especificada",
                 ),
               );
             },
@@ -284,9 +284,11 @@ class PedidoCardComIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Acessando ${pedido.titulo}')),
-        );
+        Navigator.pushNamed(
+            context,
+            "/DetalheServicoConcluido",
+            arguments: pedido.id, 
+          );
       },
       child: Card(
         margin: EdgeInsets.all(10),
@@ -310,11 +312,7 @@ class PedidoCardComIcon extends StatelessWidget {
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 5),
-                    Text(
-                      'Funcionário: ${pedido.funcionario}',
-                      style: TextStyle(fontSize: 14),
-                    ),
+
                     Text(
                       'Data: ${pedido.data}',
                       style: const TextStyle(fontSize: 14),
