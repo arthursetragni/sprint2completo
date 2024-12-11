@@ -14,7 +14,8 @@ class MeusPedidos extends StatefulWidget {
 
 class _MeusPedidosState extends State<MeusPedidos> {
   User? usuario;
-  String _baseUrl = "http://localhost:3000";
+  //String _baseUrl = "http://localhost:3000";
+  String _baseUrl = "https://backend-lddm.vercel.app";
   List<Map<String, dynamic>> _todosServicos = [];
   List<Map<String, dynamic>> _servicosFiltrados = [];
   List<Map<String, dynamic>> _servicosConcluidos = [];

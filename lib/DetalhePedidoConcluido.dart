@@ -12,7 +12,8 @@ class DetalheServicoConcluido extends StatefulWidget {
 
 class _DetalheServicoConcluidoState extends State<DetalheServicoConcluido> {
   int currentPageIndex = 0;
-  String _baseUrl = "http://localhost:3000";
+  //String _baseUrl = "http://localhost:3000";
+  String _baseUrl = "https://backend-lddm.vercel.app";
   List<Map<String, dynamic>> _todosServicos = [];
   Map<String, dynamic>? job;
 

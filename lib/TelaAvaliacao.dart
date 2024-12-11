@@ -15,7 +15,8 @@ class _TelaAvaliacaoState extends State<TelaAvaliacao> {
   final TextEditingController _comentarioController = TextEditingController();
   User? usuario;
   Avaliacao? avaliacaoExistente;
-  final AvaliacaoService _avaliacaoService = AvaliacaoService("http://localhost:3000/"); 
+  //final AvaliacaoService _avaliacaoService = AvaliacaoService("http://localhost:3000/");
+  final AvaliacaoService _avaliacaoService = AvaliacaoService("https://backend-lddm.vercel.app/"); 
 
   @override
   void initState() {
