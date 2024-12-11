@@ -221,7 +221,7 @@ class _BarraNavegacaoState extends State<BarraNavegacao> {
             // Convertendo numeroCategoria para int e comparando com servico['categoria']
             _servicosFiltrados = servicos
                 .where((servico) =>
-                    servico['categoria'] == int.parse(numeroCategoria)) // Comparação corrigida
+                    servico['categoria'] == int.parse(numeroCategoria)) 
                 .toList();
           });
 

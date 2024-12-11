@@ -15,7 +15,7 @@ class _TelaAvaliacaoState extends State<TelaAvaliacao> {
   final TextEditingController _comentarioController = TextEditingController();
   User? usuario;
   Avaliacao? avaliacaoExistente;
-  final AvaliacaoService _avaliacaoService = AvaliacaoService("http://localhost:3000/"); // Ou use o link de produção
+  final AvaliacaoService _avaliacaoService = AvaliacaoService("http://localhost:3000/"); 
 
   @override
   void initState() {
