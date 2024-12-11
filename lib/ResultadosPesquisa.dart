@@ -28,11 +28,14 @@ class ResultadosPesquisa extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Image.network(
-                      servico['imagem']!,
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.cover,
-                    ),
+                        "https://findes.com.br/wp-content/uploads/2021/03/Foto-Beneficios_450x300px.png",
+                        width: 80,
+                        height: 80,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Icon(Icons.error, size: 80);
+                        },
+                      )
                   ),
                   const SizedBox(width: 12), // Espaço entre imagem e texto
                   // Detalhes do serviço
