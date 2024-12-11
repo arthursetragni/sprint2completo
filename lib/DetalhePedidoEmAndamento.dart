@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:http/http.dart' as http;
 
 class DetalheServicoEmAndamento extends StatefulWidget {
   const DetalheServicoEmAndamento({super.key});
@@ -11,41 +12,63 @@ class DetalheServicoEmAndamento extends StatefulWidget {
 
 class _DetalheServicoEmAndamentoState extends State<DetalheServicoEmAndamento> {
   int currentPageIndex = 0;
-  List<dynamic> jobs = [];
-  Map<String, dynamic>? job; // Modificado para um Map para trabalhar com chaves como 'titulo'
-  
+  String _baseUrl = "http://localhost:3000";
+  List<Map<String, dynamic>> _todosServicos = [];
+  Map<String, dynamic>? job;
+
   @override
   void initState() {
     super.initState();
-    _loadJobs().then((data) {
-      setState(() {
-        jobs = data;
-      });
-    });
+    _carregarServicos();
   }
 
-  Future<List<dynamic>> _loadJobs() async {
-    String jsonString = await rootBundle.loadString('assets/json/jobs.json');
-    List<dynamic> jobs = json.decode(jsonString);
-    return jobs;
+  Future<void> _carregarServicos() async {
+      try {
+        setState(() {
+          _todosServicos = []; // Exibe tela de carregamento
+          });
+        final response = await http.get(Uri.parse("$_baseUrl/servico"));
+
+        if (response.statusCode == 200) {
+          final Map<String, dynamic> data = jsonDecode(response.body);
+
+          if (data.containsKey('servicos') && data['servicos'] is List) {
+            final List<dynamic> servicosDinamicos = data['servicos'];
+            final List<Map<String, dynamic>> servicos = servicosDinamicos
+                .map((e) => e as Map<String, dynamic>)
+                .toList();
+
+            setState(() {
+              _todosServicos = servicos;
+            });
+            //print(_todosServicos);
+          } else {
+            _mostrarMensagem("Nenhum serviço encontrado.");
+          }
+        } else {
+          _mostrarMensagem(
+              jsonDecode(response.body)['msg'] ?? "Erro ao buscar serviços.");
+        }
+      } catch (e) {
+        _mostrarMensagem("Erro ao conectar-se ao servidor.");
+      }
+    }
+
+  void _mostrarMensagem(String mensagem) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(mensagem)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final int trabalhoId = ModalRoute.of(context)!.settings.arguments as int;
+    final String trabalhoId = ModalRoute.of(context)!.settings.arguments as String;
 
-    // Verifica se os trabalhos já foram carregados e busca o trabalho correto
-    if (jobs.isNotEmpty) {
-      for (int i = 0; i < jobs.length; i++) {
-        if (jobs[i]['id'] == trabalhoId) {
-          job = jobs[i];
-          break;
-        }
-      }
+    if (_todosServicos.isNotEmpty) {
+      job = _todosServicos.firstWhere((element) => element['_id'] == trabalhoId, orElse: () => {});
     }
 
-    // Retorna um layout de carregamento se o job não for encontrado ainda
-    if (job == null) {
+    if (job == {}) {
       return Scaffold(
         appBar: AppBar(title: const Text("Carregando...")),
         body: const Center(child: CircularProgressIndicator()),
@@ -127,7 +150,7 @@ class _DetalheServicoEmAndamentoState extends State<DetalheServicoEmAndamento> {
                         Container(
                           margin: const EdgeInsets.only(bottom: 68, left: 53),
                           child: Text(
-                            "R\$ ${job!['preco']}", // Exibe o preço do trabalho
+                            "R\$ ${job!['preco_acordado']}", // Exibe o preço do trabalho
                             style: const TextStyle(
                               color: Color(0xFF27AE60),
                               fontSize: 15,
@@ -148,7 +171,7 @@ class _DetalheServicoEmAndamentoState extends State<DetalheServicoEmAndamento> {
                             child: const Column(
                               children: [
                                 Text(
-                                  "Marcar como Concluído",
+                                  "Concluir serviço",
                                   style: TextStyle(
                                     color: Color(0xFFFFFFFF),
                                     fontSize: 16,
@@ -199,3 +222,4 @@ class _DetalheServicoEmAndamentoState extends State<DetalheServicoEmAndamento> {
     );
   }
 }
+
