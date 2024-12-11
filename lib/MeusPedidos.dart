@@ -17,6 +17,7 @@ class _MeusPedidosState extends State<MeusPedidos> {
   String _baseUrl = "http://localhost:3000";
   List<Map<String, dynamic>> _todosServicos = [];
   List<Map<String, dynamic>> _servicosFiltrados = [];
+  List<Map<String, dynamic>> _servicosConcluidos = [];
 
   @override
   void initState() {
@@ -39,9 +40,43 @@ class _MeusPedidosState extends State<MeusPedidos> {
 
           setState(() {
             _todosServicos = servicos;
+            print(servicos);
             _servicosFiltrados = servicos.where((servico) =>
-              (servico['id_executor'] == idUsuarioLogado) ||
-              (servico['id_criador'] == idUsuarioLogado && servico['id_executor'] != "000000000000000000000000")
+              (servico['tipo'] != "concluido") && (servico['id_executor'] != "000000000000000000000000") &&
+              (servico['id_executor'] == idUsuarioLogado || servico['id_criador'] == idUsuarioLogado)
+            ).toList();
+          });
+        } else {
+          _mostrarMensagem("Nenhum serviço encontrado.");
+        }
+      } else {
+        _mostrarMensagem(
+            jsonDecode(response.body)['msg'] ?? "Erro ao buscar serviços.");
+      }
+    } catch (e) {
+      _mostrarMensagem("Erro ao conectar-se ao servidor.");
+    }
+  }
+
+    Future<void> _carregarServicosConcluidos(String idUsuarioLogado) async {
+    try {
+      final response = await http.get(Uri.parse("$_baseUrl/servico"));
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+
+        if (data.containsKey('servicos') && data['servicos'] is List) {
+          final List<dynamic> servicosDinamicos = data['servicos'];
+          final List<Map<String, dynamic>> servicos = servicosDinamicos
+              .map((e) => e as Map<String, dynamic>)
+              .toList();
+
+          setState(() {
+            _todosServicos = servicos;
+            print(servicos);
+            _servicosConcluidos = servicos.where((servico) =>
+              (servico['tipo'] == "concluido") &&
+              (servico['id_executor'] == idUsuarioLogado || servico['id_criador'] == idUsuarioLogado)
             ).toList();
           });
         } else {
@@ -70,6 +105,8 @@ class _MeusPedidosState extends State<MeusPedidos> {
         usuario = User.fromJson(jsonDecode(usuarioJson));
         _carregarServicosPorUsuario(usuario!.id);
         //_carregarServicosPorUsuario("67325de8dba63ef7c5e4c31b");
+        _carregarServicosConcluidos(usuario!.id);
+       // _carregarServicosConcluidos("67325de8dba63ef7c5e4c31b");
       });
     } else {
       print('Nenhum usuário logado encontrado');
@@ -106,7 +143,7 @@ class _MeusPedidosState extends State<MeusPedidos> {
         body: TabBarView(
           children: [
             PedidosEmAndamento(pedidosFiltrados: _servicosFiltrados),
-            PedidosConcluidos(pedidosConcluidos: _todosServicos),
+            PedidosConcluidos(pedidosConcluidos: _servicosConcluidos),
           ],
         ),
         bottomNavigationBar: const BarraNav(),

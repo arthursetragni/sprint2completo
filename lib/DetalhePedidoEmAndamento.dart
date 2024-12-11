@@ -23,36 +23,56 @@ class _DetalheServicoEmAndamentoState extends State<DetalheServicoEmAndamento> {
   }
 
   Future<void> _carregarServicos() async {
-      try {
-        setState(() {
-          _todosServicos = []; // Exibe tela de carregamento
+    try {
+      setState(() {
+        _todosServicos = []; // Exibe tela de carregamento
+      });
+      final response = await http.get(Uri.parse("$_baseUrl/servico"));
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+
+        if (data.containsKey('servicos') && data['servicos'] is List) {
+          final List<dynamic> servicosDinamicos = data['servicos'];
+          final List<Map<String, dynamic>> servicos = servicosDinamicos
+              .map((e) => e as Map<String, dynamic>)
+              .toList();
+
+          setState(() {
+            _todosServicos = servicos;
           });
-        final response = await http.get(Uri.parse("$_baseUrl/servico"));
-
-        if (response.statusCode == 200) {
-          final Map<String, dynamic> data = jsonDecode(response.body);
-
-          if (data.containsKey('servicos') && data['servicos'] is List) {
-            final List<dynamic> servicosDinamicos = data['servicos'];
-            final List<Map<String, dynamic>> servicos = servicosDinamicos
-                .map((e) => e as Map<String, dynamic>)
-                .toList();
-
-            setState(() {
-              _todosServicos = servicos;
-            });
-            //print(_todosServicos);
-          } else {
-            _mostrarMensagem("Nenhum serviço encontrado.");
-          }
         } else {
-          _mostrarMensagem(
-              jsonDecode(response.body)['msg'] ?? "Erro ao buscar serviços.");
+          _mostrarMensagem("Nenhum serviço encontrado.");
         }
-      } catch (e) {
-        _mostrarMensagem("Erro ao conectar-se ao servidor.");
+      } else {
+        _mostrarMensagem(
+            jsonDecode(response.body)['msg'] ?? "Erro ao buscar serviços.");
       }
+    } catch (e) {
+      _mostrarMensagem("Erro ao conectar-se ao servidor.");
     }
+  }
+
+  Future<void> _concluirServico(String idServico) async {
+    try {
+      final response = await http.patch(
+        Uri.parse("$_baseUrl/servico/$idServico"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"tipo": "concluido"}),
+      );
+
+      if (response.statusCode == 200) {
+        _mostrarMensagem("Serviço concluído com sucesso.");
+        setState(() {
+          job!['tipo'] = "concluido";
+        });
+      } else {
+        _mostrarMensagem("Erro ao concluir o serviço: ${response.body}");
+      }
+    } catch (e) {
+      _mostrarMensagem("Erro ao conectar-se ao servidor.");
+    }
+  }
 
   void _mostrarMensagem(String mensagem) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -159,26 +179,33 @@ class _DetalheServicoEmAndamentoState extends State<DetalheServicoEmAndamento> {
                           ),
                         ),
                         IntrinsicHeight(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              color: const Color(0xFFCC3733),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 17),
-                            margin: const EdgeInsets.only(
-                                bottom: 145, left: 145, right: 145),
-                            width: double.infinity,
-                            child: const Column(
-                              children: [
-                                Text(
-                                  "Concluir serviço",
-                                  style: TextStyle(
-                                    color: Color(0xFFFFFFFF),
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+                          child: GestureDetector(
+                            onTap: () {
+                              if (job != null && job!['_id'] != null) {
+                                _concluirServico(job!['_id']);
+                              }
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                color: const Color(0xFFCC3733),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 17),
+                              margin: const EdgeInsets.only(
+                                  bottom: 145, left: 145, right: 145),
+                              width: double.infinity,
+                              child: const Column(
+                                children: [
+                                  Text(
+                                    "Concluir serviço",
+                                    style: TextStyle(
+                                      color: Color(0xFFFFFFFF),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
