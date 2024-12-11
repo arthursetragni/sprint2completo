@@ -323,7 +323,7 @@ class _BarraNavegacaoState extends State<BarraNavegacao> {
         ),
 
         /// Página de "Meus Pedidos"
-        MeusPedidosPage(), // Chama a página de "Meus Pedidos"
+        MeusPedidos(), // Chama a página de "Meus Pedidos"
 
         /// Página de perfil
         Card(

@@ -7,6 +7,8 @@ import 'BarraNavegacao.dart';
 import 'Login.dart';
 import 'home.dart';
 import 'PaginaInicial.dart';
+import 'DetalhePedidoEmAndamento.dart';
+import 'TelaAvaliacao.dart';
 
 void main() => runApp(const MyApp());
 
@@ -29,9 +31,12 @@ class MyApp extends StatelessWidget {
         '/Detalhe': (context) => const DetalheServivo(),
         '/cadastro': (context) => const Cadastro(),
         '/pesquisa': (context) => BarraNavegacao(),
-        '/meusPedidos': (context) => MeusPedidosPage(),
+        '/meusPedidos': (context) => MeusPedidos(),
         '/meuPerfil': (context) => MeuPerfil(),
         '/paginaInicial': (context) => PaginaInicial(),
+        '/DetalheServicoEmAndamento': (context) => DetalheServicoEmAndamento(),
+        '/avaliacao': (context) => TelaAvaliacao(),
+
       },
     );
   }

@@ -4,13 +4,13 @@ import 'package:login/widgets/barra_nav.dart';
 import 'widgets/barra_nav.dart';
 import 'widgets/botao_recebe_icon.dart';
 
-class MeusPedidosPage extends StatefulWidget {
+class MeusPedidos extends StatefulWidget {
   @override
-  _MeusPedidosPageState createState() => _MeusPedidosPageState();
+  _MeusPedidosState createState() => _MeusPedidosState();
 }
 
 //página em si
-class _MeusPedidosPageState extends State<MeusPedidosPage> {
+class _MeusPedidosState extends State<MeusPedidos> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -129,15 +129,23 @@ class PedidoCardSemIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.all(10),
-      child: ListTile(
-        leading: Image.network(pedido.imagem,
-            width: 100, height: 110, fit: BoxFit.cover),
-        title: Text(pedido.titulo),
-        subtitle:
-            Text('Funcionário: ${pedido.funcionario}\nData: ${pedido.data}'),
-        isThreeLine: true,
+    return InkWell(
+      onTap: () {
+        // Ação ao clicar no card
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Detalhes do pedido: ${pedido.titulo}')),
+        );
+      },
+      child: Card(
+        margin: EdgeInsets.all(10),
+        child: ListTile(
+          leading: Image.network(pedido.imagem,
+              width: 100, height: 110, fit: BoxFit.cover),
+          title: Text(pedido.titulo),
+          subtitle:
+              Text('Funcionário: ${pedido.funcionario}\nData: ${pedido.data}'),
+          isThreeLine: true,
+        ),
       ),
     );
   }
@@ -151,52 +159,60 @@ class PedidoCardComIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.all(10),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          children: [
-            // Imagem do pedido
-            Image.network(
-              pedido.imagem,
-              width: 100,
-              height: 110,
-              fit: BoxFit.cover,
-            ),
-            const SizedBox(width: 10), // Espaço entre a imagem e o conteúdo
-            // Informações do pedido e o botão de avaliação lado a lado
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    pedido.titulo,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    'Funcionário: ${pedido.funcionario}',
-                    style: TextStyle(fontSize: 14),
-                  ),
-                  Text(
-                    'Data: ${pedido.data}',
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                ],
+    return InkWell(
+      onTap: () {
+        // Ação ao clicar no card
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Acessando ${pedido.titulo}')),
+        );
+      },
+      child: Card(
+        margin: EdgeInsets.all(10),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              // Imagem do pedido
+              Image.network(
+                pedido.imagem,
+                width: 100,
+                height: 110,
+                fit: BoxFit.cover,
               ),
-            ),
-            // Botão de avaliar ao lado do texto
-            BotaoRecebeIcon(
-              Icons.star, iconColor: Colors.yellow, iconSize: 24,
-              onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => TelaAvaliacao()),
+              const SizedBox(width: 10), // Espaço entre a imagem e o conteúdo
+              // Informações do pedido e o botão de avaliação lado a lado
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      pedido.titulo,
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      'Funcionário: ${pedido.funcionario}',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    Text(
+                      'Data: ${pedido.data}',
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ],
+                ),
+              ),
+              // Botão de avaliar ao lado do texto
+              BotaoRecebeIcon(
+                Icons.star, iconColor: Colors.yellow, iconSize: 24,
+                onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => TelaAvaliacao()),
                 );
-              },
-            ),
-          ],
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
