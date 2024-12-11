@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:login/TelaAvaliacao.dart';
 import 'package:login/widgets/barra_nav.dart';
-import 'widgets/barra_nav.dart';
 import 'widgets/botao_recebe_icon.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,13 +11,12 @@ class MeusPedidos extends StatefulWidget {
   @override
   _MeusPedidosState createState() => _MeusPedidosState();
 }
-//página em si
+
 class _MeusPedidosState extends State<MeusPedidos> {
   User? usuario;
   String _baseUrl = "http://localhost:3000";
-  //String _baseUrl = "https://backend-lddm.vercel.app";
-  List<Map<String, dynamic>> _todosServicos = []; // Lista de todos os serviços
-  List<Map<String, dynamic>> _servicosFiltrados = []; // Lista de serviços filtrados por categoria
+  List<Map<String, dynamic>> _todosServicos = [];
+  List<Map<String, dynamic>> _servicosFiltrados = [];
 
   @override
   void initState() {
@@ -30,9 +28,6 @@ class _MeusPedidosState extends State<MeusPedidos> {
     try {
       final response = await http.get(Uri.parse("$_baseUrl/servico"));
 
-      // Imprimir a resposta para ver o que está sendo retornado
-      print("Resposta do servidor: ${response.body}");
-
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
 
@@ -42,64 +37,45 @@ class _MeusPedidosState extends State<MeusPedidos> {
               .map((e) => e as Map<String, dynamic>)
               .toList();
 
-          // Filtrando serviços pelo ID do executor (usuário logado)
           setState(() {
             _todosServicos = servicos;
-            _servicosFiltrados = servicos
-                .where((servico) => servico['id_executor'] == idUsuarioLogado)
-                .toList();
+            _servicosFiltrados = servicos.where((servico) =>
+              (servico['id_executor'] == idUsuarioLogado) ||
+              (servico['id_criador'] == idUsuarioLogado && servico['id_executor'] != "000000000000000000000000")
+            ).toList();
           });
-
-          if (_servicosFiltrados.isEmpty) {
-            _mostrarMensagem("Nenhum serviço encontrado para este usuário.");
-          } else {
-            //print("Achou esses:");
-            //print(_servicosFiltrados);
-            /*
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DetalhePedidoEmAndamento(
-                  idUsuario: idUsuarioLogado,
-                  servicos: _servicosFiltrados,
-                ),
-              ),
-            );
-            */
-          }
         } else {
           _mostrarMensagem("Nenhum serviço encontrado.");
         }
       } else {
-        _mostrarMensagem(jsonDecode(response.body)['msg'] ?? "Erro ao buscar serviços.");
+        _mostrarMensagem(
+            jsonDecode(response.body)['msg'] ?? "Erro ao buscar serviços.");
       }
     } catch (e) {
       _mostrarMensagem("Erro ao conectar-se ao servidor.");
     }
   }
+
   void _mostrarMensagem(String mensagem) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(mensagem)),
     );
   }
 
-    @override
-
-    Future<void> _carregarUsuarioLogado() async {
-      final prefs = await SharedPreferences.getInstance();
-      final usuarioJson = prefs.getString("usuario");
-      if (usuarioJson != null) {
-        setState(() {
-          usuario = User.fromJson(jsonDecode(usuarioJson));
-          print(usuario!.id);
-          _carregarServicosPorUsuario(usuario!.id);
-        });
-      } else {
-        print('Nenhum usuário logado encontrado');
-      }
+  Future<void> _carregarUsuarioLogado() async {
+    final prefs = await SharedPreferences.getInstance();
+    final usuarioJson = prefs.getString("usuario");
+    if (usuarioJson != null) {
+      setState(() {
+        usuario = User.fromJson(jsonDecode(usuarioJson));
+        _carregarServicosPorUsuario(usuario!.id);
+        //_carregarServicosPorUsuario("6747660577ece4c11fda1818");
+      });
+    } else {
+      print('Nenhum usuário logado encontrado');
     }
+  }
 
-  List<dynamic> jobs = [];
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -125,13 +101,12 @@ class _MeusPedidosState extends State<MeusPedidos> {
               Tab(text: 'Concluídos'),
             ],
           ),
-          backgroundColor: const Color.fromARGB(
-              255, 251, 251, 251), 
+          backgroundColor: const Color.fromARGB(255, 251, 251, 251),
         ),
         body: TabBarView(
           children: [
-            PedidosEmAndamento(),
-            PedidosConcluidos(),
+            PedidosEmAndamento(pedidosFiltrados: _servicosFiltrados),
+            PedidosConcluidos(pedidosConcluidos: _todosServicos),
           ],
         ),
         bottomNavigationBar: const BarraNav(),
@@ -140,62 +115,79 @@ class _MeusPedidosState extends State<MeusPedidos> {
   }
 }
 
-//área dos pedidos em andamento
+// Método para obter o caminho da imagem baseado na categoria
+String _getImagePath(int categoria) {
+  switch (categoria) {
+    case 1:
+      return "assets/home/pintor.png";
+    case 2:
+      return "assets/home/empregada.jpg";
+    case 3:
+      return "assets/home/eletricista.png";
+    case 4:
+      return "assets/home/encanador.png";
+    default:
+      return "assets/home/default.png";
+  }
+}
+
+// Pedidos em andamento
 class PedidosEmAndamento extends StatelessWidget {
-  final List<Pedido> pedidos = [
-    Pedido(
-        imagem:
-            'https://st4.depositphotos.com/1203257/27909/i/450/depositphotos_279097904-stock-photo-hedge-trimming-work.jpg',
-        titulo: 'Limpeza de Jardim',
-        funcionario: 'Carlos Silva',
-        data: '01/10/2024'),
-    Pedido(
-        imagem: 'https://thumbs.dreamstime.com/b/eletricista-30694651.jpg',
-        titulo: 'Reparação Elétrica',
-        funcionario: 'Ana Souza',
-        data: '28/09/2024'),
-  ];
+  final List<Map<String, dynamic>> pedidosFiltrados;
+
+  PedidosEmAndamento({required this.pedidosFiltrados});
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: pedidos.length,
-      itemBuilder: (context, index) {
-        return PedidoCardSemIcon(pedido: pedidos[index]);
-      },
-    );
+    return pedidosFiltrados.isEmpty
+        ? Center(child: Text("Nenhum serviço em andamento."))
+        : ListView.builder(
+            itemCount: pedidosFiltrados.length,
+            itemBuilder: (context, index) {
+              final pedido = pedidosFiltrados[index];
+              final String imagePath = _getImagePath(pedido['categoria']);
+              return PedidoCardSemIcon(
+                pedido: Pedido(
+                  imagem: imagePath,
+                  titulo: pedido['titulo'],
+                  funcionario: pedido['funcionario'] ?? "Não informado",
+                  data: pedido['data_criacao'] ?? "Data não especificada",
+                ),
+              );
+            },
+          );
   }
 }
 
-//área dos pedidos concluídos
+// Pedidos concluídos
 class PedidosConcluidos extends StatelessWidget {
-  final List<Pedido> pedidos = [
-    Pedido(
-        imagem:
-            'https://thumbs.dreamstime.com/z/pintor-que-pinta-uma-parede-com-rolo-de-pintura-70939583.jpg',
-        titulo: 'Pintura Residencial',
-        funcionario: 'João Pedro',
-        data: '25/09/2024'),
-    Pedido(
-        imagem:
-            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlIk-WqYKq3v4FvTYuPGsrhNPQ2QAMmCtARw&s',
-        titulo: 'Instalação de Ar-condicionado',
-        funcionario: 'Maria Clara',
-        data: '20/09/2024'),
-  ];
+  final List<Map<String, dynamic>> pedidosConcluidos;
+
+  PedidosConcluidos({required this.pedidosConcluidos});
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: pedidos.length,
-      itemBuilder: (context, index) {
-        return PedidoCardComIcon(pedido: pedidos[index]);
-      },
-    );
+    return pedidosConcluidos.isEmpty
+        ? Center(child: Text("Nenhum serviço concluído."))
+        : ListView.builder(
+            itemCount: pedidosConcluidos.length,
+            itemBuilder: (context, index) {
+              final pedido = pedidosConcluidos[index];
+              final String imagePath = _getImagePath(pedido['categoria']);
+              return PedidoCardComIcon(
+                pedido: Pedido(
+                  imagem: imagePath,
+                  titulo: pedido['titulo'],
+                  funcionario: pedido['funcionario'] ?? "Não informado",
+                  data: pedido['data'] ?? "Data não especificada",
+                ),
+              );
+            },
+          );
   }
 }
 
-//classe pedido
+// Classe Pedido
 class Pedido {
   final String imagem;
   final String titulo;
@@ -210,7 +202,7 @@ class Pedido {
   });
 }
 
-//card sem estrela
+// Card sem ícone
 class PedidoCardSemIcon extends StatelessWidget {
   final Pedido pedido;
 
@@ -220,7 +212,6 @@ class PedidoCardSemIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // Ação ao clicar no card
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Detalhes do pedido: ${pedido.titulo}')),
         );
@@ -228,11 +219,11 @@ class PedidoCardSemIcon extends StatelessWidget {
       child: Card(
         margin: EdgeInsets.all(10),
         child: ListTile(
-          leading: Image.network(pedido.imagem,
+          leading: Image.asset(pedido.imagem,
               width: 100, height: 110, fit: BoxFit.cover),
           title: Text(pedido.titulo),
           subtitle:
-              Text('Funcionário: ${pedido.funcionario}\nData: ${pedido.data}'),
+              Text('Data: ${pedido.data}'),
           isThreeLine: true,
         ),
       ),
@@ -240,7 +231,7 @@ class PedidoCardSemIcon extends StatelessWidget {
   }
 }
 
-//a partir daqui card com a estrela
+// Card com ícone
 class PedidoCardComIcon extends StatelessWidget {
   final Pedido pedido;
 
@@ -250,7 +241,6 @@ class PedidoCardComIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // Ação ao clicar no card
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Acessando ${pedido.titulo}')),
         );
@@ -261,22 +251,21 @@ class PedidoCardComIcon extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Row(
             children: [
-              // Imagem do pedido
-              Image.network(
+              Image.asset(
                 pedido.imagem,
                 width: 100,
                 height: 110,
                 fit: BoxFit.cover,
               ),
-              const SizedBox(width: 10), // Espaço entre a imagem e o conteúdo
-              // Informações do pedido e o botão de avaliação lado a lado
+              const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       pedido.titulo,
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 5),
                     Text(
@@ -290,14 +279,15 @@ class PedidoCardComIcon extends StatelessWidget {
                   ],
                 ),
               ),
-              // Botão de avaliar ao lado do texto
               BotaoRecebeIcon(
-                Icons.star, iconColor: Colors.yellow, iconSize: 24,
+                Icons.star,
+                iconColor: Colors.yellow,
+                iconSize: 24,
                 onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TelaAvaliacao()),
-                );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => TelaAvaliacao()),
+                  );
                 },
               ),
             ],
@@ -305,17 +295,5 @@ class PedidoCardComIcon extends StatelessWidget {
         ),
       ),
     );
-  }
-  
-}
-
-class ApiServices {
-  // URL base da API, definida como constante
-  static const String baseUrl =
-      "http://localhost:3000";
-
-  // Método para gerar a URL de rotas específicas
-  static String endpoint(String path) {
-    return "$baseUrl$path";
   }
 }
