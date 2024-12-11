@@ -5,19 +5,26 @@ class User {
   String? gender;
   String? telephone;
   String? adress;
-  DateTime? date_of_birth;
+  dynamic date_of_birth;
 
-  User({required this.id, required this.name, required this.email, this.adress, this.gender,this.date_of_birth,this.telephone});
+  User(
+      {required this.id,
+      required this.name,
+      required this.email,
+      this.adress,
+      this.gender,
+      this.date_of_birth,
+      this.telephone});
 
   // Método para converter JSON para o modelo User
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['_id'] ?? 'Id desconhecido',
-      name: json['name'] ?? 'Nome desconhecido',
-      email: json['email'] ?? 'Email desconhecido',
-      gender: json['gender'] ?? 'Gênero desconhecido',
-      telephone: json['telephone'] ?? 'Telefone desconhecido',
-      adress: json['adress'] ?? 'Endereço desconhecido',
+      id: json['_id'] ?? '',
+      name: json['name'] ?? '',
+      email: json['email'] ?? '',
+      gender: json['gender'] ?? null,
+      telephone: json['telephone'] ?? null,
+      adress: json['adress'] ?? null,
       date_of_birth: json['date_of_birth'],
     );
   }
