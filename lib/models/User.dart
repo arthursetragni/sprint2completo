@@ -37,5 +37,9 @@ class User {
         'telephone': telephone,
         'adress': adress,
         'date_of_birth': date_of_birth,
+        'gender': gender,
+        'telephone': telephone,
+        'adress': adress,
+        'date_of_birth': date_of_birth,
       };
 }
