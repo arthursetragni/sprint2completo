@@ -10,8 +10,25 @@ import 'PaginaInicial.dart';
 import 'DetalhePedidoEmAndamento.dart';
 import 'TelaAvaliacao.dart';
 import 'DetalhePedidoConcluido.dart';
+import 'post_job.dart';
 
-void main() => runApp(const MyApp());
+import 'dart:io';
+import 'package:http/http.dart' as http;
+
+// Ignorar a validação do certificado
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (cert, host, port) => true;
+  }
+}
+
+void main() {
+  HttpOverrides.global =
+      MyHttpOverrides(); // Ignorar a validação do certificado
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -38,6 +55,7 @@ class MyApp extends StatelessWidget {
         '/DetalheServicoEmAndamento': (context) => DetalheServicoEmAndamento(),
         '/avaliacao': (context) => TelaAvaliacao(),
         '/DetalheServicoConcluido': (context) => DetalheServicoConcluido(),
+        '/postJob': (context) => PostJob(),
       },
     );
   }

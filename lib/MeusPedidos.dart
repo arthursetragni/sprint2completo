@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:login/TelaAvaliacao.dart';
-import 'package:login/widgets/barra_nav.dart';
 import 'widgets/botao_recebe_icon.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
