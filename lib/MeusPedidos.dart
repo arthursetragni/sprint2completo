@@ -74,7 +74,7 @@ class _MeusPedidosState extends State<MeusPedidos> {
 
           setState(() {
             _todosServicos = servicos;
-            print(servicos);
+            //print(servicos);
             _servicosConcluidos = servicos.where((servico) =>
               (servico['tipo'] == "concluido") &&
               (servico['id_executor'] == idUsuarioLogado || servico['id_criador'] == idUsuarioLogado)
