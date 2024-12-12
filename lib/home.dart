@@ -257,7 +257,7 @@ class _HomeState extends State<Home> {
 class ApiServices {
   // URL base da API, definida como constante
   static const String baseUrl =
-      "http://localhost:3000";
+      "https://backend-lddm.vercel.app";
 
   // Método para gerar a URL de rotas específicas
   static String endpoint(String path) {

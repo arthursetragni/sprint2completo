@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:login/Login.dart';
 import 'widgets/barra_nav.dart'; //barra de navegação
-//import 'widgets/editable_field.dart'; //campo de texto
-//import 'widgets/editable_datafield.dart'; //campo de data
-//import 'widgets/ActionButton.dart'; // old buttons
 import 'widgets/genero_botao.dart'; //campo de gênero
 import 'package:http/http.dart' as http; // Para requisições HTTP
 import 'dart:convert'; // Para decodificar JSON
@@ -13,8 +10,6 @@ import 'package:awesome_dialog/awesome_dialog.dart'; // Para caixas de diálogo 
 import 'widgets/text_editable.dart';
 import 'package:intl/intl.dart';
 import 'widgets/cep.dart';
-//import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-//import 'widgets/input_login.dart'; //campo de texto para teste TESTE
 
 class MeuPerfil extends StatefulWidget {
   @override
@@ -31,8 +26,6 @@ class _MeuPerfilState extends State<MeuPerfil> {
   String? genero;
   String? idUsuario;
   String rotaBackEnd = 'https://backend-lddm.vercel.app';
-
-  //adicionar controller nos inputs de texto !!!!!!!!!!!!!!!!!!!!!!!!!
 
   //DateTime? editDataNascimento;
   final editDataNascimentoController = TextEditingController();
@@ -185,14 +178,6 @@ class _MeuPerfilState extends State<MeuPerfil> {
               //editable fields
               const SizedBox(height: 20),
 
-              //old editable TEST
-              //InputLogin(
-              //    title: "nome",
-              //    label: nomeController.text,
-              //    isPassword: false,
-              //    controller: editNomeController,
-              //    isEmail: false),
-
               NewEditable(
                 //Nome editable
                 LabelText: "Nome",
@@ -223,17 +208,6 @@ class _MeuPerfilState extends State<MeuPerfil> {
                 isCell: false,
               ),
 
-              //old editable Date
-              //EditableDateField(
-              //  //data de nascimento editable
-              //  title: 'Data de Nascimento',
-              //  initialDate: dataNascimento ?? DateTime(2000, 1, 1),
-              //  onSave: (value) {
-              //    dataNascimento = value;
-              //    print("Data de nascimento alterada para $value");
-              //  },
-              //),
-
               EditableGenderField(
                 //gênero editable
                 title: 'Gênero',
@@ -253,35 +227,12 @@ class _MeuPerfilState extends State<MeuPerfil> {
                 isCell: true,
               ),
               const SizedBox(height: 20),
-
-              /*NewEditable(
-                LabelText: "Localização",
-                controller: editLocalizacaoController,
-                placeholder: localizacaoController.text,
-                isPass: false,
-                isDate: false,
-                isCell: false,
-              ),*/ // OLD CEP
-
               CepEditable(
                 labelText: "Localização",
                 controller: editLocalizacaoController,
                 placeholder: localizacaoController.text,
               ),
 
-              //old editable
-              //EditableField(
-              //  title: 'Localização',
-              //  controller: localizacaoController,
-              //  onChanged: (value) {
-              //    localizacaoController.text = value;
-              //    print("Localização alterada para $value");
-              //  },
-              //),
-
-              //new buttons - animated
-
-              //!!!!!!!! Atention, test in android can be a problem !!!!!!!!
 
               SizedBox(height: 20),
               const SizedBox(height: 20),
@@ -498,83 +449,6 @@ class _MeuPerfilState extends State<MeuPerfil> {
     }
   }
 
-  //Future old
-  /*Future<void> updateUser(String id) async {
-    final url = Uri.parse('$rotaBackEnd/user/update/$id');
-    DateFormat format = DateFormat('dd/MM/yyyy');
-    DateTime parsedDate = DateTime.now();
-    try {
-      parsedDate = format.parse(editDataNascimentoController.text);
-      print(parsedDate);
-    } catch (e) {
-      print("Erro ao converter data: $e");
-    }
-    final data = {
-      'name': editNomeController.text,
-      'email': editEmailController.text, //editEmailController.text,
-      'date_of_birth': parsedDate, //dataNascimento?.toIso8601String(),
-      'genero': genero,
-      'telephone': editTelefoneController.text,
-      'adress': editLocalizacaoController.text,
-    };
-    print('Dados enviados para o backend: $data');
-
-    try {
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode(data),
-      );
-
-      if (response.statusCode == 200) {
-        print('Usuário atualizado com sucesso :)');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Account Updated")),
-        );
-
-/* TESTE UPDATE USER */
-        //atualizar o update
-        //nomeController.text = editNomeController.text;
-        //emailController.text = editEmailController.text;
-        //telefoneController.text = editTelefoneController.text;
-        //localizacaoController.text = editLocalizacaoController.text;
-        //dataNascimento = editDataNascimento;
-        //dataNascimentoController.text = editDataNascimentoController.text;
-        //genero = editGenero.text;
-
-        User usuarioAtualizado = User(
-          email: editEmailController.text,
-          name: editNomeController.text,
-          
-          f_birth: DateTime.tryParse(
-              editDataNascimentoController.text), //dataNascimento,
-          gender: genero,
-          telephone: editTelefoneController.text,
-          adress: editLocalizacaoController.text,
-          id: idUsuario!,
-        );
-        await _saveUserData(usuarioAtualizado);
-        setState(() {
-          idUsuario = usuarioAtualizado.id;
-        });
-      } else {
-        print('Falha ao atualizar usuário: ${response.statusCode}');
-        if (response.statusCode == 404) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Usu´rio não encontrado")),
-          );
-        } else if (response.statusCode == 500) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text(
-                    "Erro ao atualizar usuário, tente novamente mais tarde")),
-          );
-        }
-      }
-    } catch (error) {
-      print('Erro na conexão: $error');
-    }
-  }*/
 
   Future<void> deleteUser(String id) async {
     final url = Uri.parse('$rotaBackEnd/user/$id');

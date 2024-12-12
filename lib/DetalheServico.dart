@@ -19,14 +19,7 @@ class _DetalheServivoState extends State<DetalheServivo> {
   Map<String, dynamic>? job; // Modificado para um Map para trabalhar com chaves como 'titulo'
   
   @override
-  // void initState() {
-  //   super.initState();
-  //   _loadJobs().then((data) {
-  //     setState(() {
-  //       jobs = data;
-  //     });
-  //   });
-  // }
+
   void _inscreverUsuario(String trabalhoId) async {
     try {
       // Recupera o ID do usuário do SharedPreferences
@@ -312,7 +305,7 @@ class _DetalheServivoState extends State<DetalheServivo> {
 
 class ApiServices {
   // URL base da API, definida como constante
-  static const String baseUrl = "http://localhost:3000";
+  static const String baseUrl = "https://backend-lddm.vercel.app";
 
   // Método para gerar a URL de rotas específicas
   static String endpoint(String path) {
